@@ -9,11 +9,41 @@ const lexendDeca = Lexend_Deca({
 });
 
 export const metadata: Metadata = {
-  title: "Sats to USD Converter | Satoshi to US Dollar",
+  title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
   description:
-    "Convert satoshis (SATS) to USD and Bitcoin to US dollars with live rates.",
+    "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, fast, and no sign-up required.",
+  metadataBase: new URL("https://sats2usd.com"),
+  alternates: {
+    canonical: "https://sats2usd.com",
+  },
+  openGraph: {
+    title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
+    description:
+      "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, fast, and no sign-up required.",
+    url: "https://sats2usd.com",
+    siteName: "Sats2USD",
+    type: "website",
+    images: [
+      {
+        url: "https://sats2usd.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Sats to USD Converter",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
+    description:
+      "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, fast, and no sign-up required.",
+    images: ["https://sats2usd.com/og-image.png"],
+  },
   verification: {
     google: "deiB3oK4r8X9Utr3wOVublgsupJBapcLlXdR1FQqgw4",
+  },
+  other: {
+    "theme-color": "#f7931a",
   },
 };
 
