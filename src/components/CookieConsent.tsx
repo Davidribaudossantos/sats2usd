@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import {
   readConsentCookie,
   writeConsentCookie,
@@ -52,16 +53,6 @@ function gtagUpdate(p: Prefs) {
   });
 }
 
-function loadGA() {
-  if (!GA_ID || document.getElementById("ga-script")) return;
-  const s = document.createElement("script");
-  s.id = "ga-script";
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  s.async = true;
-  document.head.appendChild(s);
-  window.gtag("js", new Date());
-  window.gtag("config", GA_ID);
-}
 
 function loadAdSense() {
   if (!ADSENSE_ID || document.getElementById("adsense-script")) return;
@@ -128,6 +119,7 @@ function Toggle({
 export default function CookieConsent() {
   const [mounted, setMounted] = useState(false);
   // showBanner: true when no consent saved yet and modal not open
+  const [analyticsConsented, setAnalyticsConsented] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [showModal, setShowModal] = useState(false);
   // prefs: current toggle state in modal (may differ from savedPrefs while editing)
@@ -139,7 +131,7 @@ export default function CookieConsent() {
 
   const applyConsent = useCallback((p: Prefs) => {
     gtagUpdate(p);
-    if (p.analytics) loadGA();
+    if (p.analytics) setAnalyticsConsented(true);
     if (p.advertising) loadAdSense();
   }, []);
 
@@ -259,6 +251,20 @@ export default function CookieConsent() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── GA4 scripts — only after analytics consent ── */}
+      {analyticsConsented && GA_ID && (
+        <>
+          <Script
+            id="ga-script"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="ga-config" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+          </Script>
+        </>
       )}
 
       {/* ── Modal ── */}
