@@ -11,7 +11,7 @@ const lexendDeca = Lexend_Deca({
 export const metadata: Metadata = {
   title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
   description:
-    "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, fast, and no sign-up required.",
+    "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, real-time sats to USD calculator — no sign-up required. Check how much your sats are worth.",
   metadataBase: new URL("https://sats2usd.com"),
   alternates: {
     canonical: "https://sats2usd.com",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
     description:
-      "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, fast, and no sign-up required.",
+      "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, real-time sats to USD calculator — no sign-up required. Check how much your sats are worth.",
     url: "https://sats2usd.com",
     siteName: "Sats2USD",
     type: "website",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
     description:
-      "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, fast, and no sign-up required.",
+      "Convert satoshis to US dollars instantly with live Bitcoin prices. Free, real-time sats to USD calculator — no sign-up required. Check how much your sats are worth.",
     images: ["https://sats2usd.com/og-image.png"],
   },
   verification: {
