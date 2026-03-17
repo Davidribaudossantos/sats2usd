@@ -39,15 +39,15 @@ function getMeasureCtx() {
  * fits within `availableWidth`. Falls back to char-count heuristic on SSR.
  */
 function getFittingFontSize(text: string, availableWidth: number): number {
-  if (!text) return 36;
+  if (!text) return FONT_SIZES[0]; // empty → largest size so Math.min never caps a real value
   const ctx = getMeasureCtx();
   if (!ctx) {
     // SSR heuristic — account for commas in the char count
     const len = text.length;
-    if (len <= 8)  return 42;
-    if (len <= 11) return 36;
-    if (len <= 14) return 32;
-    if (len <= 18) return 26;
+    if (len <= 10) return 42;
+    if (len <= 13) return 36;
+    if (len <= 17) return 32;
+    if (len <= 21) return 26;
     return 24;
   }
   // Add a small safety buffer so measured text never touches the container
@@ -89,15 +89,14 @@ function restoreCursor(input: HTMLInputElement, oldValue: string, newValue: stri
 }
 
 // ── Field width → available text width ───────────────────────────────────────
-// Start from full field width, subtract:
-// - left padding/label offset  (≈12px)
-// - right currency/copy area  (≈94px)
+// Subtract actual layout constraints only:
+// - left-3 padding             (≈12px)
+// - right-[94px] currency area (≈94px)
 // - borders                    (≈6px)
-// Then reserve an extra 100px of space on the right so digits never overlap
-// the copy icon + currency label.
+// The input element's own right-[94px] CSS already prevents text from
+// overlapping the currency label/copy icon — no extra JS reserve needed.
 function fieldToAvailableWidth(fieldWidth: number) {
-  const baseAvailable = fieldWidth - 112;
-  return Math.max(0, baseAvailable - 100);
+  return Math.max(0, fieldWidth - 112);
 }
 
 // ── FAQ data ─────────────────────────────────────────────────────────────────
@@ -372,8 +371,14 @@ export default function Home() {
   }, []);
 
   // ── Derived values ─────────────────────────────────────────────────────────
-  const satsFontSize = getFittingFontSize(satsInput, inputAvailableWidth);
-  const usdFontSize = getFittingFontSize(usdInput, inputAvailableWidth);
+  // Both fields always share the same font size so they stay visually in sync.
+  // Use the minimum of both fitted sizes so neither field ever clips its content.
+  const sharedFontSize = Math.min(
+    getFittingFontSize(satsInput, inputAvailableWidth),
+    getFittingFontSize(usdInput, inputAvailableWidth),
+  );
+  const satsFontSize = sharedFontSize;
+  const usdFontSize = sharedFontSize;
 
   const hasSatsValue = satsInput.replace(/,/g, "") !== "";
   const hasUsdValue = usdInput !== "" && usdInput !== ".";
