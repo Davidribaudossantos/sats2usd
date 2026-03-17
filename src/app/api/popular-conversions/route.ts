@@ -1,0 +1,60 @@
+import { NextResponse } from "next/server";
+
+export const revalidate = 21600; // 6 hours
+
+const SATS_PER_BTC = 100_000_000;
+const BTC_URL =
+  "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd";
+const FX_URL =
+  "https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,NGN";
+
+// Fallback USD value per 1 unit of currency (approximate, used if API omits NGN)
+const NGN_USD_FALLBACK = 1 / 1580;
+
+function formatSats(sats: number): string {
+  if (sats >= 10) return Math.round(sats).toLocaleString("en-US");
+  if (sats >= 1) return sats.toFixed(1);
+  return sats.toFixed(2);
+}
+
+export async function GET() {
+  try {
+    const [btcRes, fxRes] = await Promise.all([
+      fetch(BTC_URL, { next: { revalidate: 21600 } }),
+      fetch(FX_URL, { next: { revalidate: 21600 } }),
+    ]);
+
+    if (!btcRes.ok) throw new Error("BTC fetch failed");
+
+    const btcData = await btcRes.json();
+    const btcPrice: number = btcData?.bitcoin?.usd;
+    if (typeof btcPrice !== "number") throw new Error("unexpected BTC data");
+
+    // fxData.rates: { EUR: 0.92, GBP: 0.79, JPY: 149.5, NGN: 1634 }
+    // Meaning: 1 USD = X foreign units → 1 foreign unit = 1/X USD
+    let fxRates: Record<string, number> = {};
+    if (fxRes.ok) {
+      const fxData = await fxRes.json();
+      fxRates = fxData?.rates ?? {};
+    }
+
+    const usdPerForeign: Record<string, number> = {
+      USD: 1,
+      EUR: fxRates.EUR ? 1 / fxRates.EUR : null!,
+      GBP: fxRates.GBP ? 1 / fxRates.GBP : null!,
+      JPY: fxRates.JPY ? 1 / fxRates.JPY : null!,
+      NGN: fxRates.NGN ? 1 / fxRates.NGN : NGN_USD_FALLBACK,
+    };
+
+    const conversions = (["USD", "EUR", "GBP", "JPY", "NGN"] as const)
+      .filter((c) => usdPerForeign[c] != null)
+      .map((currency) => ({
+        currency,
+        sats: formatSats((usdPerForeign[currency] / btcPrice) * SATS_PER_BTC),
+      }));
+
+    return NextResponse.json({ conversions });
+  } catch {
+    return NextResponse.json({ error: "unavailable" }, { status: 503 });
+  }
+}

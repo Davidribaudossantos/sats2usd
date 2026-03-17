@@ -1,26 +1,77 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-lexend-deca: "Lexend Deca", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lexend-deca), Arial, sans-serif;
+  background-color: #f7931a;
 }
+
+/* ── Copied! toast ── */
+@keyframes copied-fade {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-copied {
+  animation: copied-fade 2s ease forwards;
+}
+
+/* ── Result field value pulse (150ms, ease-out) ── */
+@keyframes value-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.8; }
+}
+.animate-value-pulse {
+  animation: value-pulse 150ms ease-out;
+}
+
+/* ── Live rates flash: 2 opacity fades, total 600ms ── */
+@keyframes rates-flash {
+  0%   { opacity: 1; }
+  17%  { opacity: 0; }
+  33%  { opacity: 1; }
+  50%  { opacity: 0; }
+  67%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+.animate-rates-flash {
+  animation: rates-flash 1200ms ease-in-out;
+}
+
+/* ── FAQ accordion (grid height + opacity, 300ms Material ease) ── */
+.faq-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.faq-grid.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.faq-inner {
+  overflow: hidden;
+}
+
+/* ── Desktop-only hover underline for nav/footer links ── */
+@media (min-width: 768px) {
+  .hover-underline-desktop:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ── Staggered page-load fade-up ── */
+@keyframes fade-up-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-item {
+  animation: fade-up-in 450ms ease-out both;
+}
+
