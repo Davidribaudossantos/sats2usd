@@ -108,6 +108,21 @@ const FAQ_ITEMS = [
       "A satoshi (sat) is the smallest unit of Bitcoin. One Bitcoin equals 100,000,000 satoshis. It's named after Bitcoin's creator, Satoshi Nakamoto.",
   },
   {
+    question: "What's the difference between Bitcoin and a satoshi?",
+    answer:
+      "A satoshi is simply a fraction of a Bitcoin — the smallest one. One Bitcoin equals 100 million satoshis. It's like the relationship between a dollar and a cent, just with more decimal places. When someone says \"I own 50,000 sats,\" they mean they own 0.0005 BTC.",
+  },
+  {
+    question: "Who is Satoshi Nakamoto?",
+    answer:
+      "Satoshi Nakamoto is the pseudonym used by the person — or group — who created Bitcoin. They published the Bitcoin whitepaper in 2008 and launched the network in January 2009, then gradually disappeared from public communication by 2011. Their true identity has never been confirmed.",
+  },
+  {
+    question: "Why did Satoshi cap Bitcoin at 21 million?",
+    answer:
+      "Satoshi never explicitly explained the choice, but the logic is widely understood: a fixed supply creates digital scarcity. Unlike fiat currencies, which central banks can print indefinitely (devaluing what you already hold), Bitcoin's hard cap means no one can inflate it away. The 21 million limit, combined with the halving schedule that cuts new supply roughly every four years, mimics the scarcity properties of gold, but with mathematically enforced precision.",
+  },
+  {
     question: "Why use satoshis instead of Bitcoin?",
     answer:
       "Satoshis make it easier to deal with small Bitcoin amounts without using many decimal places. As Bitcoin's value grows, transacting in sats feels more intuitive and precise.",
@@ -117,9 +132,14 @@ const FAQ_ITEMS = [
     answer: "", // populated dynamically from live rate
   },
   {
-    question: "Why did Satoshi cap Bitcoin at 21 million?",
+    question: "Can I buy satoshis directly?",
     answer:
-      "Satoshi never explicitly explained the choice, but the logic is widely understood: a fixed supply creates digital scarcity. Unlike fiat currencies, which central banks can print indefinitely (devaluing what you already hold), Bitcoin's hard cap means no one can inflate it away. The 21 million limit, combined with the halving schedule that cuts new supply roughly every four years, mimics the scarcity properties of gold, but with mathematically enforced precision.",
+      "Yes — when you buy Bitcoin, you're already buying satoshis. Most exchanges let you purchase any amount, even just a few dollars' worth. You don't need to buy a whole Bitcoin. Platforms like Coinbase, Kraken, and Strike all support small purchases.",
+  },
+  {
+    question: "Can I convert other currencies?",
+    answer:
+      "Currently we support USD conversions only. More currency support is planned for a future update.",
   },
   {
     question: "Is this converter accurate?",
@@ -127,9 +147,9 @@ const FAQ_ITEMS = [
       "This tool uses current market data to provide estimates. Cryptocurrency prices are highly volatile and change frequently.",
   },
   {
-    question: "Can I convert other currencies?",
+    question: "How often does the price update?",
     answer:
-      "Currently we support USD conversions only. More currency support is planned for a future update.",
+      "The converter pulls live Bitcoin pricing data and updates in real time. The conversion rates you see reflect the current market price at the moment you use the tool.",
   },
   {
     question: "Do I need to create an account?",
