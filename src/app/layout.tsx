@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Sats to USD Converter | Satoshi to US Dollar",
   description:
     "Convert satoshis (SATS) to USD and Bitcoin to US dollars with live rates.",
+  verification: {
+    google: "deiB3oK4r8X9Utr3wOVublgsupJBapcLlXdR1FQqgw4",
+  },
 };
 
 export default function RootLayout({
