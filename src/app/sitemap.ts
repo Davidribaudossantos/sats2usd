@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { PAIR_SLUGS } from "@/lib/currencyPairs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -8,6 +9,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 1,
     },
+    ...PAIR_SLUGS.map((slug) => ({
+      url: `https://sats2usd.com/convert/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    })),
     {
       url: "https://sats2usd.com/privacy-policy",
       lastModified: new Date(),

@@ -4,19 +4,37 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import type { CurrencyPair, PairSlug } from "@/lib/currencyPairs";
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// ── Currency icon map ─────────────────────────────────────────────────────────
+const CURRENCY_ICONS: Record<string, string> = {
+  USD: "/usd-icon.svg",
+  EUR: "/Euro.svg",
+  GBP: "/GBP.svg",
+  JPY: "/JPY.svg",
+  BRL: "/BRL.svg",
+};
+
+// ── Constants ─────────────────────────────────────────────────────────────────
 const SATS_PER_BTC = 100_000_000;
 const MAX_DIGITS = 20;
-const RATES_URL = "/api/btc-price";
+const BTC_URL = "/api/btc-price";
 const FETCH_TIMEOUT_MS = 5_000;
 const REFRESH_INTERVAL_MS = 60_000;
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function formatUsd(value: number): string {
+// ── Helpers ───────────────────────────────────────────────────────────────────
+/**
+ * Format a fiat value for display.
+ * JPY: no decimals (whole numbers, or 4dp for sub-1 values).
+ * Others: 2dp for values ≥ 1, 6dp for sub-1.
+ */
+function formatFiat(value: number, isJPY: boolean): string {
   if (value === 0) return "0";
+  if (isJPY) {
+    if (value >= 1) return Math.round(value).toLocaleString("en-US");
+    return value.toFixed(4);
+  }
   if (value >= 1) {
-    // e.g. 1234.56 → "1,234.56"
     const [int, dec] = value.toFixed(2).split(".");
     return `${parseInt(int, 10).toLocaleString("en-US")}.${dec}`;
   }
@@ -25,7 +43,6 @@ function formatUsd(value: number): string {
 
 const FONT_SIZES = [42, 36, 32, 26, 24, 20, 18];
 
-// Cached canvas context for text measurement (client only)
 let _measureCtx: CanvasRenderingContext2D | null = null;
 function getMeasureCtx() {
   if (typeof window === "undefined") return null;
@@ -33,15 +50,10 @@ function getMeasureCtx() {
   return _measureCtx;
 }
 
-/**
- * Returns the largest font size (px) from FONT_SIZES at which `text`
- * fits within `availableWidth`. Falls back to char-count heuristic on SSR.
- */
 function getFittingFontSize(text: string, availableWidth: number): number {
-  if (!text) return FONT_SIZES[0]; // empty → largest size so Math.min never caps a real value
+  if (!text) return FONT_SIZES[0];
   const ctx = getMeasureCtx();
   if (!ctx) {
-    // SSR heuristic — account for commas in the char count
     const len = text.length;
     if (len <= 10) return 42;
     if (len <= 13) return 36;
@@ -49,8 +61,6 @@ function getFittingFontSize(text: string, availableWidth: number): number {
     if (len <= 21) return 26;
     return 24;
   }
-  // Add a small safety buffer so measured text never touches the container
-  // edges even if canvas metrics are slightly optimistic.
   const safeWidth = Math.max(0, availableWidth - 20);
   for (const size of FONT_SIZES) {
     ctx.font = `400 ${size}px 'Lexend Deca', Arial, sans-serif`;
@@ -59,47 +69,40 @@ function getFittingFontSize(text: string, availableWidth: number): number {
   return FONT_SIZES[FONT_SIZES.length - 1];
 }
 
-/**
- * Apply comma separators to a raw USD string (e.g. "1234.56" → "1,234.56").
- * Preserves a trailing decimal point while the user is still typing.
- */
-function applyUsdCommas(raw: string): string {
+function applyFiatCommas(raw: string): string {
   if (!raw || raw === ".") return raw;
   const dotIdx = raw.indexOf(".");
   const intPart = dotIdx === -1 ? raw : raw.slice(0, dotIdx);
-  const decPart = dotIdx === -1 ? "" : raw.slice(dotIdx); // includes the "."
+  const decPart = dotIdx === -1 ? "" : raw.slice(dotIdx);
   const formattedInt = intPart ? parseInt(intPart, 10).toLocaleString("en-US") : "";
   return formattedInt + decPart;
 }
 
-/**
- * After reformatting a controlled input with commas, restore the caret to the
- * logically equivalent position (same number of non-comma chars before it).
- */
-function restoreCursor(input: HTMLInputElement, oldValue: string, newValue: string, oldCursor: number) {
+function restoreCursor(
+  input: HTMLInputElement,
+  oldValue: string,
+  newValue: string,
+  oldCursor: number,
+) {
   const nonCommasBefore = oldValue.slice(0, oldCursor).replace(/,/g, "").length;
   let counted = 0;
   let newPos = newValue.length;
   for (let i = 0; i < newValue.length; i++) {
     if (newValue[i] !== ",") counted++;
-    if (counted === nonCommasBefore) { newPos = i + 1; break; }
+    if (counted === nonCommasBefore) {
+      newPos = i + 1;
+      break;
+    }
   }
   requestAnimationFrame(() => input.setSelectionRange(newPos, newPos));
 }
 
-// ── Field width → available text width ───────────────────────────────────────
-// Subtract actual layout constraints only:
-// - left-3 padding             (≈12px)
-// - right-[94px] currency area (≈94px)
-// - borders                    (≈6px)
-// The input element's own right-[94px] CSS already prevents text from
-// overlapping the currency label/copy icon — no extra JS reserve needed.
 function fieldToAvailableWidth(fieldWidth: number) {
   return Math.max(0, fieldWidth - 112);
 }
 
-// ── FAQ data ─────────────────────────────────────────────────────────────────
-const FAQ_ITEMS = [
+// ── FAQ data ──────────────────────────────────────────────────────────────────
+const FAQ_BASE = [
   {
     question: "What is a satoshi?",
     answer:
@@ -126,18 +129,14 @@ const FAQ_ITEMS = [
       "Satoshis make it easier to deal with small Bitcoin amounts without using many decimal places. As Bitcoin's value grows, transacting in sats feels more intuitive and precise.",
   },
   {
-    question: "How many satoshis are in $1?",
-    answer: "", // populated dynamically from live rate
+    // Placeholder — question and answer are populated dynamically per currency
+    question: "__SATS_PER_UNIT__",
+    answer: "",
   },
   {
     question: "Can I buy satoshis directly?",
     answer:
       "Yes — when you buy Bitcoin, you're already buying satoshis. Most exchanges let you purchase any amount, even just a few dollars' worth. You don't need to buy a whole Bitcoin. Platforms like Coinbase, Kraken, and Strike all support small purchases.",
-  },
-  {
-    question: "Can I convert other currencies?",
-    answer:
-      "Currently we support USD conversions only. More currency support is planned for a future update.",
   },
   {
     question: "Is this converter accurate?",
@@ -151,71 +150,80 @@ const FAQ_ITEMS = [
   },
   {
     question: "Do I need to create an account?",
-    answer:
-      "No account required. This is a free, instant converter with no sign-up needed.",
+    answer: "No account required. This is a free, instant converter with no sign-up needed.",
   },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function Home() {
-  // satsInput: raw digits while user is typing; comma-formatted when computed
+interface Props extends CurrencyPair {
+  pairSlug: PairSlug;
+}
+
+export default function FiatConverter({
+  currency,
+  currencyName,
+  fxCode,
+  h1,
+  pairSlug,
+}: Props) {
+  const isJPY = currency === "JPY";
+
   const [satsInput, setSatsInput] = useState("");
-  // usdInput: raw decimal string while typing; formatted decimal when computed
-  const [usdInput, setUsdInput] = useState("");
-  // which field the user last typed in (determines which copy icon shows)
-  const [lastTyped, setLastTyped] = useState<"sats" | "usd" | null>(null);
-  const [focusedField, setFocusedField] = useState<"sats" | "usd" | null>(null);
-  const [copiedField, setCopiedField] = useState<"sats" | "usd" | null>(null);
+  const [fiatInput, setFiatInput] = useState("");
+  const [lastTyped, setLastTyped] = useState<"sats" | "fiat" | null>(null);
+  const [focusedField, setFocusedField] = useState<"sats" | "fiat" | null>(null);
+  const [copiedField, setCopiedField] = useState<"sats" | "fiat" | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [satoshiExpanded, setSatoshiExpanded] = useState(false);
   const [ratesFlashKey, setRatesFlashKey] = useState(0);
 
   const [btcPrice, setBtcPrice] = useState<number | null>(null);
-  const [ratesStatus, setRatesStatus] = useState<"loading" | "ready" | "error">("loading");
+  // fxRate: fiat units per 1 USD (from Frankfurter). 1 for USD (no fetch).
+  const [fxRate, setFxRate] = useState<number | null>(fxCode ? null : 1);
+  const [btcFetchError, setBtcFetchError] = useState(false);
 
-  const [popularConversions, setPopularConversions] = useState<{ currency: string; sats: string }[]>([]);
+  const [popularConversions, setPopularConversions] = useState<
+    { currency: string; sats: string }[]
+  >([]);
 
   const { isMobile, mounted } = useIsMobile();
-
-  // fieldWidth: actual pixel width of the input fields, updated on resize
-  // Mobile default: min(screenWidth, 375) - 64px padding = 311px
   const [fieldWidth, setFieldWidth] = useState(311);
 
-  // Derived live rates (null while loading)
-  const usdPerSat = btcPrice ? btcPrice / SATS_PER_BTC : null;
-  const satsPerUsd = btcPrice ? SATS_PER_BTC / btcPrice : null;
+  // BTC price expressed in this fiat currency
+  const btcPriceInFiat = btcPrice !== null && fxRate !== null ? btcPrice * fxRate : null;
+  const fiatPerSat = btcPriceInFiat ? btcPriceInFiat / SATS_PER_BTC : null;
+  const satsPerFiat = btcPriceInFiat ? SATS_PER_BTC / btcPriceInFiat : null;
+
+  // Derived loading/ready states based on actual data availability
+  const ratesLoading = btcPriceInFiat === null && !btcFetchError;
+  const ratesReady = btcPriceInFiat !== null && fiatPerSat !== null && satsPerFiat !== null;
 
   const satsInputRef = useRef<HTMLInputElement>(null);
-  const usdInputRef = useRef<HTMLInputElement>(null);
+  const fiatInputRef = useRef<HTMLInputElement>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Responsive field width ──────────────────────────────────────────────────
+  // ── Responsive field width ─────────────────────────────────────────────────
   useEffect(() => {
-    function updateFieldWidth() {
+    function update() {
       const w = window.innerWidth;
-      if (w >= 1024) {
-        setFieldWidth(500);
-      } else if (w >= 768) {
-        setFieldWidth(320);
-      } else {
-        // content has px-8 (32px each side), max-w-[375px]
-        setFieldWidth(Math.min(w, 375) - 64);
-      }
+      if (w >= 1024) setFieldWidth(500);
+      else if (w >= 768) setFieldWidth(320);
+      else setFieldWidth(Math.min(w, 375) - 64);
     }
-    updateFieldWidth();
-    window.addEventListener("resize", updateFieldWidth);
-    return () => window.removeEventListener("resize", updateFieldWidth);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
   const inputAvailableWidth = fieldToAvailableWidth(fieldWidth);
 
-  // ── Live BTC price fetch ────────────────────────────────────────────────────
+  // ── BTC price fetch ────────────────────────────────────────────────────────
   const fetchBtcPrice = useCallback(async () => {
-    setRatesStatus("loading");
+    setBtcFetchError(false);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
     try {
-      const res = await fetch(RATES_URL, { signal: controller.signal });
+      const res = await fetch(BTC_URL, { signal: controller.signal });
       clearTimeout(timeoutId);
       if (!res.ok) throw new Error("bad response");
       const data = await res.json();
@@ -225,10 +233,9 @@ export default function Home() {
         if (prev !== price) setRatesFlashKey((k) => k + 1);
         return price;
       });
-      setRatesStatus("ready");
     } catch {
       clearTimeout(timeoutId);
-      setRatesStatus("error");
+      setBtcFetchError(true);
     }
   }, []);
 
@@ -238,91 +245,110 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [fetchBtcPrice]);
 
+  // ── FX rate fetch (non-USD currencies) ────────────────────────────────────
+  useEffect(() => {
+    if (!fxCode) return;
+    fetch(`https://api.frankfurter.app/latest?from=USD&to=${fxCode}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const rate = data?.rates?.[fxCode];
+        if (typeof rate === "number") setFxRate(rate);
+      })
+      .catch(() => {});
+  }, [fxCode]);
+
+  // ── Popular conversions fetch ──────────────────────────────────────────────
   useEffect(() => {
     fetch("/api/popular-conversions")
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => { if (data?.conversions) setPopularConversions(data.conversions); })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.conversions) setPopularConversions(data.conversions);
+      })
       .catch(() => {});
   }, []);
 
-  // Imperatively trigger pulse on the computed (output) input element
+  // ── Pulse helper ──────────────────────────────────────────────────────────
   const triggerPulse = useCallback((ref: React.RefObject<HTMLInputElement | null>) => {
     const el = ref.current;
     if (!el) return;
     el.classList.remove("animate-value-pulse");
-    void el.offsetWidth; // force reflow to restart animation
+    void el.offsetWidth;
     el.classList.add("animate-value-pulse");
   }, []);
 
-  // ── Handlers ───────────────────────────────────────────────────────────────
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleSatsChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target;
       const oldValue = input.value;
       const oldCursor = input.selectionStart ?? oldValue.length;
-
       const raw = oldValue.replace(/[^0-9]/g, "");
-      if (raw.length > MAX_DIGITS) return; // silent limit
-
-      // Format with commas and restore caret
+      if (raw.length > MAX_DIGITS) return;
       const formatted = raw ? parseInt(raw, 10).toLocaleString("en-US") : "";
       setSatsInput(formatted);
       restoreCursor(input, oldValue, formatted, oldCursor);
-
       setLastTyped("sats");
-      if (raw === "" || !usdPerSat) {
-        setUsdInput("");
+      if (raw === "" || !fiatPerSat) {
+        setFiatInput("");
       } else {
-        const computed = formatUsd(parseInt(raw.replace(/,/g, ""), 10) * usdPerSat);
-        setUsdInput(computed);
-        triggerPulse(usdInputRef);
+        const computed = formatFiat(parseInt(raw, 10) * fiatPerSat, isJPY);
+        setFiatInput(computed);
+        triggerPulse(fiatInputRef);
       }
     },
-    [triggerPulse, usdPerSat]
+    [triggerPulse, fiatPerSat, isJPY],
   );
 
-  const handleUsdChange = useCallback(
+  const handleFiatChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target;
       const oldValue = input.value;
       const oldCursor = input.selectionStart ?? oldValue.length;
 
-      // Strip commas + anything except digits and decimal point
-      let raw = oldValue.replace(/[^0-9.]/g, "");
-      // Only one decimal point allowed
-      const dotIdx = raw.indexOf(".");
-      if (dotIdx !== -1)
-        raw = raw.slice(0, dotIdx + 1) + raw.slice(dotIdx + 1).replace(/\./g, "");
-      // Enforce digit limit (excluding the dot)
-      if (raw.replace(".", "").length > MAX_DIGITS) return;
-
-      // Format with commas and restore caret
-      const formatted = applyUsdCommas(raw);
-      setUsdInput(formatted);
-      restoreCursor(input, oldValue, formatted, oldCursor);
-
-      setLastTyped("usd");
-      if (raw === "" || raw === "." || !satsPerUsd) {
-        setSatsInput("");
-      } else {
-        const usdNum = parseFloat(raw.replace(/,/g, ""));
-        if (!isNaN(usdNum)) {
-          const computedSats = Math.round(usdNum * satsPerUsd);
+      if (isJPY) {
+        // JPY: integers only
+        const raw = oldValue.replace(/[^0-9]/g, "");
+        if (raw.length > MAX_DIGITS) return;
+        const formatted = raw ? parseInt(raw, 10).toLocaleString("en-US") : "";
+        setFiatInput(formatted);
+        restoreCursor(input, oldValue, formatted, oldCursor);
+        setLastTyped("fiat");
+        if (raw === "" || !satsPerFiat) {
+          setSatsInput("");
+        } else {
+          const computedSats = Math.round(parseInt(raw, 10) * satsPerFiat);
           setSatsInput(computedSats.toLocaleString("en-US"));
           triggerPulse(satsInputRef);
         }
+      } else {
+        // Other currencies: allow decimals
+        let raw = oldValue.replace(/[^0-9.]/g, "");
+        const dotIdx = raw.indexOf(".");
+        if (dotIdx !== -1)
+          raw = raw.slice(0, dotIdx + 1) + raw.slice(dotIdx + 1).replace(/\./g, "");
+        if (raw.replace(".", "").length > MAX_DIGITS) return;
+        const formatted = applyFiatCommas(raw);
+        setFiatInput(formatted);
+        restoreCursor(input, oldValue, formatted, oldCursor);
+        setLastTyped("fiat");
+        if (raw === "" || raw === "." || !satsPerFiat) {
+          setSatsInput("");
+        } else {
+          const fiatNum = parseFloat(raw.replace(/,/g, ""));
+          if (!isNaN(fiatNum)) {
+            const computedSats = Math.round(fiatNum * satsPerFiat);
+            setSatsInput(computedSats.toLocaleString("en-US"));
+            triggerPulse(satsInputRef);
+          }
+        }
       }
     },
-    [triggerPulse, satsPerUsd]
+    [triggerPulse, satsPerFiat, isJPY],
   );
 
-  const handleSatsFocus = useCallback(() => {
-    setFocusedField("sats");
-  }, []);
-
+  const handleSatsFocus = useCallback(() => setFocusedField("sats"), []);
   const handleSatsBlur = useCallback(() => {
     setFocusedField(null);
-    // Reformat with comma separators
     setSatsInput((prev) => {
       if (!prev) return prev;
       const n = parseInt(prev.replace(/,/g, ""), 10);
@@ -330,27 +356,27 @@ export default function Home() {
     });
   }, []);
 
-  const handleUsdFocus = useCallback(() => {
-    setFocusedField("usd");
-  }, []);
-
-  const handleUsdBlur = useCallback(() => {
+  const handleFiatFocus = useCallback(() => setFocusedField("fiat"), []);
+  const handleFiatBlur = useCallback(() => {
     setFocusedField(null);
-    // Reformat on blur (e.g. "1." → "1.00")
-    setUsdInput((prev) => {
+    setFiatInput((prev) => {
       if (!prev || prev === ".") return prev;
+      if (isJPY) {
+        const n = parseInt(prev.replace(/,/g, ""), 10);
+        return isNaN(n) ? prev : n.toLocaleString("en-US");
+      }
       const n = parseFloat(prev.replace(/,/g, ""));
-      return isNaN(n) ? prev : formatUsd(n);
+      return isNaN(n) ? prev : formatFiat(n, false);
     });
-  }, []);
+  }, [isJPY]);
 
   const handleReset = useCallback(() => {
     setSatsInput("");
-    setUsdInput("");
+    setFiatInput("");
     setLastTyped(null);
   }, []);
 
-  const handleCopy = useCallback((field: "sats" | "usd", value: string) => {
+  const handleCopy = useCallback((field: "sats" | "fiat", value: string) => {
     const text = value.replace(/,/g, "");
     try {
       navigator.clipboard.writeText(text);
@@ -369,55 +395,54 @@ export default function Home() {
     copyTimerRef.current = setTimeout(() => setCopiedField(null), 500);
   }, []);
 
-  // ── Derived values ─────────────────────────────────────────────────────────
-  // Both fields always share the same font size so they stay visually in sync.
-  // Use the minimum of both fitted sizes so neither field ever clips its content.
+  // ── Derived values ────────────────────────────────────────────────────────
   const sharedFontSize = Math.min(
     getFittingFontSize(satsInput, inputAvailableWidth),
-    getFittingFontSize(usdInput, inputAvailableWidth),
+    getFittingFontSize(fiatInput, inputAvailableWidth),
   );
   const satsFontSize = sharedFontSize;
-  const usdFontSize = sharedFontSize;
+  const fiatFontSize = sharedFontSize;
 
   const hasSatsValue = satsInput.replace(/,/g, "") !== "";
-  const hasUsdValue = usdInput !== "" && usdInput !== ".";
+  const hasFiatValue = fiatInput !== "" && fiatInput !== ".";
 
-  // Copy icon only appears on the computed (opposite) field
-  const showSatsCopy = lastTyped === "usd" && hasSatsValue;
-  const showUsdCopy = lastTyped === "sats" && hasUsdValue;
+  const showSatsCopy = lastTyped === "fiat" && hasSatsValue;
+  const showFiatCopy = lastTyped === "sats" && hasFiatValue;
 
-  // ── Render ─────────────────────────────────────────────────────────────────
+  // FAQ with dynamic question/answer for this currency
+  const faqItems = FAQ_BASE.map((item) =>
+    item.question === "__SATS_PER_UNIT__"
+      ? {
+          question: `How many satoshis are in 1 ${currencyName}?`,
+          answer: "",
+        }
+      : item,
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div className="flex min-h-screen flex-col items-center bg-[#f7931a] gap-8 py-8 md:pt-[12px]">
 
-      {/* ── TOP AD: desktop only (728×90 leaderboard) ── */}
+      {/* TOP AD: desktop only (728×90 leaderboard) */}
       {mounted && !isMobile && (
         <div
           style={{
-            width: 728,
-            height: 90,
-            background: "#fff",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#888",
+            width: 728, height: 90, background: "#fff", borderRadius: 4,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 14, fontWeight: 600, color: "#888",
           }}
         />
       )}
 
-      {/* ── Main content ── */}
       <div className="flex w-full max-w-[375px] md:max-w-[320px] lg:max-w-[500px] flex-col gap-8 px-8 md:px-0">
 
         {/* Header */}
         <div className="fade-in-item flex flex-col items-center gap-3" style={{ animationDelay: "0ms" }}>
-          <div className="size-10">
-            <Image src="/btc-logo.svg" alt="Bitcoin logo" width={40} height={40} />
-          </div>
+          <Link href="/" className="size-10 cursor-pointer">
+            <Image src="/btc-logo.svg" alt="Back to homepage" width={40} height={40} />
+          </Link>
           <h1 className="text-center text-[36px] font-medium leading-[1.1] text-black">
-            Satoshi to USD converter
+            {h1}
           </h1>
         </div>
 
@@ -431,7 +456,13 @@ export default function Home() {
                 className="group flex items-center gap-1 text-[12px] font-semibold text-[#8d4f04] hover:underline"
               >
                 Reset
-                <Image src="/reset.svg" alt="Reset" width={18} height={18} className="transition-transform duration-300 ease-in-out group-hover:rotate-180" />
+                <Image
+                  src="/reset.svg"
+                  alt="Reset"
+                  width={18}
+                  height={18}
+                  className="transition-transform duration-300 ease-in-out group-hover:rotate-180"
+                />
               </button>
             </div>
 
@@ -491,10 +522,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* USD Input */}
+            {/* Fiat Input */}
             <div
               className={`fade-in-item relative h-[99px] w-full rounded-[8px] bg-white border-[3px] transition-[border-color] duration-200 ease-in-out ${
-                focusedField === "usd" ? "border-black" : "border-transparent"
+                focusedField === "fiat" ? "border-black" : "border-transparent"
               }`}
               style={{ animationDelay: "200ms" }}
             >
@@ -502,28 +533,28 @@ export default function Home() {
                 Amount
               </span>
               <input
-                ref={usdInputRef}
+                ref={fiatInputRef}
                 type="text"
-                inputMode="decimal"
-                value={usdInput}
-                onChange={handleUsdChange}
-                onFocus={handleUsdFocus}
-                onBlur={handleUsdBlur}
+                inputMode={isJPY ? "numeric" : "decimal"}
+                value={fiatInput}
+                onChange={handleFiatChange}
+                onFocus={handleFiatFocus}
+                onBlur={handleFiatBlur}
                 placeholder="0"
                 className={`absolute top-[67px] -translate-y-1/2 left-3 right-[94px] bg-transparent font-normal outline-none placeholder-[#c9c9c9] transition-[color] duration-200 ease-in-out ${
-                  hasUsdValue ? "text-black" : "text-[#c9c9c9]"
+                  hasFiatValue ? "text-black" : "text-[#c9c9c9]"
                 }`}
-                style={{ fontSize: `${usdFontSize}px` }}
+                style={{ fontSize: `${fiatFontSize}px` }}
               />
-              {showUsdCopy && (
+              {showFiatCopy && (
                 <button
-                  onClick={() => handleCopy("usd", usdInput)}
+                  onClick={() => handleCopy("fiat", fiatInput)}
                   className="group absolute right-[22px] top-[57px] size-6"
-                  aria-label="Copy USD value"
+                  aria-label={`Copy ${currency} value`}
                 >
-                  {copiedField === "usd" && (
+                  {copiedField === "fiat" && (
                     <span
-                      key={usdInput}
+                      key={fiatInput}
                       className="animate-copied absolute right-7 top-1/2 -translate-y-1/2 whitespace-nowrap text-[10px] font-medium text-black"
                     >
                       Copied!
@@ -540,10 +571,17 @@ export default function Home() {
               )}
               <div className="absolute right-3 top-3 flex items-center gap-1">
                 <div className="flex flex-col items-end">
-                  <span className="text-[14px] font-medium text-black">US Dollar</span>
-                  <span className="text-[12px] font-semibold text-[#f7931a]">USD</span>
+                  <span className="text-[14px] font-medium text-black">{currencyName}</span>
+                  <span className="text-[12px] font-semibold text-[#f7931a]">{currency}</span>
                 </div>
-                <Image src="/usd-icon.svg" alt="US Dollar" width={30} height={30} />
+                {CURRENCY_ICONS[currency] && (
+                  <Image
+                    src={CURRENCY_ICONS[currency]}
+                    alt={currencyName}
+                    width={30}
+                    height={30}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -552,14 +590,14 @@ export default function Home() {
           <div className="fade-in-item flex flex-col gap-[8px]" style={{ animationDelay: "300ms" }}>
             <p className="text-[12px] font-semibold text-[#8d4f04]">Live rates:</p>
 
-            {ratesStatus === "loading" && (
+            {ratesLoading && (
               <div className="flex flex-col gap-[4px]">
                 <div className="h-[12px] w-full animate-pulse rounded-[2px] bg-[#8d4f04]/30" />
                 <div className="h-[12px] w-full animate-pulse rounded-[2px] bg-[#8d4f04]/30" />
               </div>
             )}
 
-            {ratesStatus === "error" && (
+            {btcFetchError && !btcPriceInFiat && (
               <p className="text-[12px] font-medium text-[#b20000]">
                 Unable to load Bitcoin price.{" "}
                 <button onClick={fetchBtcPrice} className="underline">
@@ -568,7 +606,7 @@ export default function Home() {
               </p>
             )}
 
-            {ratesStatus === "ready" && btcPrice && usdPerSat && satsPerUsd && (
+            {ratesReady && btcPriceInFiat && fiatPerSat && satsPerFiat && (
               <div
                 key={ratesFlashKey}
                 className={`flex flex-col gap-[4px] rounded-[4px] text-[12px] font-medium text-[#8d4f04] ${
@@ -576,40 +614,38 @@ export default function Home() {
                 }`}
               >
                 <div className="flex justify-between">
-                  <span>1 SATS = {usdPerSat.toFixed(6)} USD</span>
-                  <span>1 USD = {Math.round(satsPerUsd).toLocaleString()} SATS</span>
+                  <span>1 SATS = {fiatPerSat.toFixed(6)} {currency}</span>
+                  <span>1 {currency} = {Math.round(satsPerFiat).toLocaleString()} SATS</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>1 BTC = {btcPrice.toLocaleString("en-US")} USD</span>
-                  <span>1 USD = {(1 / btcPrice).toFixed(8)} BTC</span>
+                  <span>
+                    1 BTC ={" "}
+                    {btcPriceInFiat.toLocaleString("en-US", {
+                      maximumFractionDigits: isJPY ? 0 : 2,
+                    })}{" "}
+                    {currency}
+                  </span>
+                  <span>1 {currency} = {(1 / btcPriceInFiat).toFixed(8)} BTC</span>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── MIDDLE ADS ── 300×250 on mobile + desktop ── */}
+        {/* MIDDLE AD 300×250 */}
         {mounted && (
           <div
             style={{
-              width: 300,
-              height: 250,
-              margin: "0 auto",
-              background: "#fff",
-              borderRadius: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#888",
+              width: 300, height: 250, margin: "0 auto", background: "#fff",
+              borderRadius: 4, display: "flex", alignItems: "center",
+              justifyContent: "center", fontSize: 14, fontWeight: 600, color: "#888",
             }}
           />
         )}
 
         {/* FAQ */}
         <div className="fade-in-item flex flex-col gap-4" style={{ animationDelay: "400ms" }}>
-          {FAQ_ITEMS.map((item, index) => (
+          {faqItems.map((item, index) => (
             <div key={index} className="flex flex-col">
               <button
                 className="group flex w-full items-start justify-between text-left"
@@ -626,15 +662,17 @@ export default function Home() {
                   alt={openFaq === index ? "Collapse" : "Expand"}
                   width={16}
                   height={16}
-                  className={`mt-[3px] shrink-0 transition-transform duration-300 ease-in-out ${openFaq === index ? "rotate-45" : ""}`}
+                  className={`mt-[3px] shrink-0 transition-transform duration-300 ease-in-out ${
+                    openFaq === index ? "rotate-45" : ""
+                  }`}
                 />
               </button>
               <div className={`faq-grid ${openFaq === index ? "open" : ""}`}>
                 <div className="faq-inner">
                   <p className="pt-3 text-[14px] font-medium leading-[22px] text-[#8d4f04]">
-                    {item.question === "How many satoshis are in $1?"
-                      ? satsPerUsd
-                        ? `At the current rate, 1 USD ≈ ${Math.round(satsPerUsd).toLocaleString()} SATS.`
+                    {item.question.startsWith("How many satoshis are in 1")
+                      ? satsPerFiat
+                        ? `At the current rate, 1 ${currency} ≈ ${Math.round(satsPerFiat).toLocaleString()} SATS.`
                         : "Loading current rate…"
                       : item.answer}
                   </p>
@@ -646,9 +684,7 @@ export default function Home() {
 
         {/* Conversion table */}
         <div className="fade-in-item flex flex-col gap-3" style={{ animationDelay: "450ms" }}>
-          <p className="text-[18px] font-semibold leading-[20px] text-black">
-            Conversion table
-          </p>
+          <p className="text-[18px] font-semibold leading-[20px] text-black">Conversion table</p>
           <div className="flex flex-col gap-[2px] text-[14px] font-medium leading-[22px] text-[#8d4f04]">
             {[
               ["1 satoshi", "0.00000001 bitcoin"],
@@ -676,13 +712,13 @@ export default function Home() {
               Popular conversions
             </p>
             <div className="flex flex-col gap-[2px] text-[14px] font-medium leading-[22px] text-[#8d4f04]">
-              {popularConversions.map(({ currency, sats }) => (
+              {popularConversions.map(({ currency: c, sats }) => (
                 <Link
-                  key={currency}
-                  href={`/convert/${currency.toLowerCase()}-to-sats`}
+                  key={c}
+                  href={`/convert/${c.toLowerCase()}-to-sats`}
                   className="flex items-start justify-between w-full hover:opacity-70 transition-opacity duration-150"
                 >
-                  <span>1 {currency}</span>
+                  <span>1 {c}</span>
                   <span className="text-right">≈ {sats} satoshi</span>
                 </Link>
               ))}
@@ -690,24 +726,18 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── AD UNIT: Fixed 300×50 banner between Popular Conversions and Learn More ── */}
-        {mounted && <div
-          style={{
-            width: 300,
-            height: 50,
-            margin: "0 auto",
-            background: "#fff",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#888",
-          }}
-        />}
+        {/* AD 300×50 */}
+        {mounted && (
+          <div
+            style={{
+              width: 300, height: 50, margin: "0 auto", background: "#fff",
+              borderRadius: 4, display: "flex", alignItems: "center",
+              justifyContent: "center", fontSize: 14, fontWeight: 600, color: "#888",
+            }}
+          />
+        )}
 
-        {/* Learn more about Bitcoin & Satoshis */}
+        {/* Learn more */}
         <div className="fade-in-item flex flex-col gap-3" style={{ animationDelay: "458ms" }}>
           <p className="text-[18px] font-semibold leading-[20px] text-black">
             Learn more about Bitcoin &amp; Satoshis
@@ -737,7 +767,12 @@ export default function Home() {
                   className="shrink-0 transition-transform duration-200 ease-out group-hover:translate-x-1"
                   aria-hidden="true"
                 >
-                  <path d="M0 5.69253H12M12 5.69253L7.2 0.692532M12 5.69253L7.2 10.6925" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
+                  <path
+                    d="M0 5.69253H12M12 5.69253L7.2 0.692532M12 5.69253L7.2 10.6925"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 <span className="group-hover:underline">{label}</span>
               </a>
@@ -745,7 +780,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* The smallest giant in finance */}
+        {/* Editorial */}
         <div className="fade-in-item flex flex-col gap-1" style={{ animationDelay: "460ms" }}>
           <div className="flex flex-col gap-3">
             <p className="text-[18px] font-semibold leading-[20px] text-black">
@@ -755,8 +790,6 @@ export default function Home() {
               {`In 2008, a pseudonymous figure called Satoshi Nakamoto published a nine-page whitepaper that would reshape how the world thinks about money. Bitcoin launched shortly after in January 2009, but while the protocol defined its smallest unit from day one (0.00000001 BTC), it didn't yet have a name.`}
             </p>
           </div>
-
-          {/* Expanded content */}
           <div className={`faq-grid ${satoshiExpanded ? "open" : ""}`}>
             <div className="faq-inner">
               <div className="flex flex-col gap-3 pt-3 text-[14px] font-medium leading-[22px] text-[#8d4f04]">
@@ -767,8 +800,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-          {/* Read more / Close */}
           <button
             onClick={() => setSatoshiExpanded((v) => !v)}
             className="flex items-center text-left"
@@ -780,7 +811,10 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <div className="fade-in-item flex w-full flex-col gap-4 text-[12px] text-[#8d4f04]" style={{ animationDelay: "500ms" }}>
+        <div
+          className="fade-in-item flex w-full flex-col gap-4 text-[12px] text-[#8d4f04]"
+          style={{ animationDelay: "500ms" }}
+        >
           <p className="leading-[16px]">
             <span className="font-semibold">Disclaimer: </span>
             <span className="font-normal">
@@ -789,68 +823,40 @@ export default function Home() {
             </span>
           </p>
           <p className="font-semibold leading-[16px]">
-            <Link href="/" className="hover:underline">
-              Home
-            </Link>
+            <Link href="/" className="hover:underline">Home</Link>
             &nbsp; |&nbsp;{" "}
-            <Link
-              href="/privacy-policy"
-              className="hover:underline"
-            >
-              Privacy policy
-            </Link>
+            <Link href="/privacy-policy" className="hover:underline">Privacy policy</Link>
             &nbsp; |&nbsp;{" "}
-            <Link href="/cookies" className="hover:underline">
-              Cookies
-            </Link>
+            <Link href="/cookies" className="hover:underline">Cookies</Link>
             &nbsp; |&nbsp;{" "}
-            <Link href="/terms-of-use" className="hover:underline">
-              Terms of use
-            </Link>
+            <Link href="/terms-of-use" className="hover:underline">Terms of use</Link>
             &nbsp; |&nbsp;{" "}
-            <Link href="/contact" className="hover:underline">
-              Contact
-            </Link>
+            <Link href="/contact" className="hover:underline">Contact</Link>
           </p>
           <p className="text-center font-normal leading-[12px]">© 2026 Sats2USD.com</p>
-          {/* ── AD UNIT 3: Bottom Banner (300×50) — mobile only ── */}
-          {mounted && isMobile && <div
-            style={{
-              width: 300,
-              height: 50,
-              margin: "0 auto",
-              background: "#fff",
-              borderRadius: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#888",
-            }}
-          />}
+          {mounted && isMobile && (
+            <div
+              style={{
+                width: 300, height: 50, margin: "0 auto", background: "#fff",
+                borderRadius: 4, display: "flex", alignItems: "center",
+                justifyContent: "center", fontSize: 14, fontWeight: 600, color: "#888",
+              }}
+            />
+          )}
         </div>
 
       </div>
 
-      {/* ── AD UNIT 4: Bottom Leaderboard (728×90) — desktop only ── */}
+      {/* BOTTOM LEADERBOARD: desktop only (728×90) */}
       {mounted && !isMobile && (
         <div
           style={{
-            width: 728,
-            height: 90,
-            background: "#fff",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#888",
+            width: 728, height: 90, background: "#fff", borderRadius: 4,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 14, fontWeight: 600, color: "#888",
           }}
         />
       )}
-
     </div>
   );
 }
