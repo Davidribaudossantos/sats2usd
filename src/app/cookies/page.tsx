@@ -110,7 +110,7 @@ export default function CookiesPage() {
             <span className="underline">Cookies</span>
             {"  |  "}
             <Link href="/terms-of-use" className="hover:underline">
-              Terms of use
+              Terms
             </Link>
             {"  |  "}
             <Link href="/contact" className="hover:underline">

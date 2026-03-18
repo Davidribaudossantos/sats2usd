@@ -817,7 +817,7 @@ export default function FiatConverter({
             &nbsp; |&nbsp;{" "}
             <Link href="/cookies" className="hover:underline">Cookies</Link>
             &nbsp; |&nbsp;{" "}
-            <Link href="/terms-of-use" className="hover:underline">Terms of use</Link>
+            <Link href="/terms-of-use" className="hover:underline">Terms</Link>
             &nbsp; |&nbsp;{" "}
             <Link href="/contact" className="hover:underline">Contact</Link>
           </p>

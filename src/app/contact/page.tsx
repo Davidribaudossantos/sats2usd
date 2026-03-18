@@ -56,7 +56,7 @@ export default function Contact() {
             </Link>
             {"  |  "}
             <Link href="/terms-of-use" className="hover:underline">
-              Terms of use
+              Terms
             </Link>
             {"  |  "}
             <span className="underline">Contact</span>

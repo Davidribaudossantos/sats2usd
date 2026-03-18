@@ -144,7 +144,7 @@ const FAQ_ITEMS = [
   {
     question: "Can I convert other currencies?",
     answer:
-      "Currently we support USD conversions only. More currency support is planned for a future update.",
+      "Currently we support Sats to USD, EUR, GBP, JPY and BRL conversions. We will add more currencies in the future.",
   },
   {
     question: "Is this converter accurate?",
@@ -394,6 +394,17 @@ export default function Home() {
   const hasSatsValue = satsInput.replace(/,/g, "") !== "";
   const hasUsdValue = usdInput !== "" && usdInput !== ".";
 
+  // Live BTC equivalent of sats input
+  const btcEquivalent = (() => {
+    const raw = satsInput.replace(/,/g, "");
+    const n = parseInt(raw, 10);
+    if (!raw || isNaN(n) || n === 0) return "0 BTC";
+    const btc = n / SATS_PER_BTC;
+    // toFixed(8) then strip trailing zeros after decimal
+    const str = btc.toFixed(8).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+    return `${str} BTC`;
+  })();
+
   // Copy icon only appears on the computed (opposite) field
   const showSatsCopy = lastTyped === "usd" && hasSatsValue;
   const showUsdCopy = lastTyped === "sats" && hasUsdValue;
@@ -421,8 +432,11 @@ export default function Home() {
         {/* Inputs */}
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3">
-            {/* Reset */}
-            <div className="flex items-center justify-end gap-1">
+            {/* Reset / BTC equivalent row */}
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[12px] font-semibold text-[#8d4f04]">
+                {btcEquivalent}
+              </span>
               <button
                 onClick={handleReset}
                 className="group flex items-center gap-1 text-[12px] font-semibold text-[#8d4f04] hover:underline"
@@ -772,7 +786,7 @@ export default function Home() {
             </Link>
             &nbsp; |&nbsp;{" "}
             <Link href="/terms-of-use" className="hover:underline">
-              Terms of use
+              Terms
             </Link>
             &nbsp; |&nbsp;{" "}
             <Link href="/contact" className="hover:underline">
