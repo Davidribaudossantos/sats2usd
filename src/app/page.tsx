@@ -762,38 +762,33 @@ export default function Home() {
 
         {/* Footer */}
         <div className="fade-in-item flex w-full flex-col gap-4 text-[12px] text-[#8d4f04]" style={{ animationDelay: "500ms" }}>
-          <p className="leading-[16px]">
+          <p className="leading-[16px] md:text-center">
             <span className="font-semibold">Disclaimer: </span>
             <span className="font-normal">
               This tool provides estimates based on current market data. Cryptocurrency prices are
               highly volatile. Not financial advice.
             </span>
           </p>
-          <p className="font-semibold leading-[16px]">
-            <Link href="/" className="hover:underline">
-              Home
-            </Link>
-            &nbsp; |&nbsp;{" "}
-            <Link
-              href="/privacy-policy"
-              className="hover:underline"
-            >
-              Privacy policy
-            </Link>
-            &nbsp; |&nbsp;{" "}
-            <Link href="/cookies" className="hover:underline">
-              Cookies
-            </Link>
-            &nbsp; |&nbsp;{" "}
-            <Link href="/terms-of-use" className="hover:underline">
-              Terms
-            </Link>
-            &nbsp; |&nbsp;{" "}
-            <Link href="/contact" className="hover:underline">
-              Contact
-            </Link>
-          </p>
-          <p className="text-center font-normal leading-[12px]">© 2026 Sats2USD.com</p>
+          <a
+            href="https://x.com/Sats2USD"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-start md:self-center"
+          >
+            <Image src="/X_logo.svg" alt="Follow @Sats2USD on X" width={24} height={24} />
+          </a>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-semibold leading-[16px] md:justify-center md:gap-0">
+            <Link href="/" className="hover:underline">Home</Link>
+            <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
+            <Link href="/privacy-policy" className="hover:underline">Privacy policy</Link>
+            <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
+            <Link href="/cookies" className="hover:underline">Cookies</Link>
+            <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
+            <Link href="/terms-of-use" className="hover:underline">Terms</Link>
+            <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
+            <Link href="/contact" className="hover:underline">Contact</Link>
+          </div>
+          <p className="font-normal leading-[12px] md:text-center">© 2026 Sats2USD.com</p>
           {/* ── FOOTER BANNER: Mobile_Ad3 300×50 ── */}
           <AdFooterBanner />
         </div>

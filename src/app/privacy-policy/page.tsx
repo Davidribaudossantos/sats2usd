@@ -163,26 +163,26 @@ export default function PrivacyPolicy() {
 
         {/* Footer */}
         <div className="flex flex-col gap-4 text-[12px] text-[#8d4f04]">
-          <p className="font-semibold leading-[16px]">
-            <Link href="/" className="hover:underline">
-              Home
-            </Link>
-            {"  |  "}
+          <a
+            href="https://x.com/Sats2USD"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-start md:self-center"
+          >
+            <Image src="/X_logo.svg" alt="Follow @Sats2USD on X" width={24} height={24} />
+          </a>
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-semibold leading-[16px] md:justify-center md:gap-0">
+            <Link href="/" className="hover:underline">Home</Link>
+            <span className="hidden md:inline">{"  |  "}</span>
             <span className="underline">Privacy policy</span>
-            {"  |  "}
-            <Link href="/cookies" className="hover:underline">
-              Cookies
-            </Link>
-            {"  |  "}
-            <Link href="/terms-of-use" className="hover:underline">
-              Terms
-            </Link>
-            {"  |  "}
-            <Link href="/contact" className="hover:underline">
-              Contact
-            </Link>
-          </p>
-          <p className="text-center font-normal leading-[12px]">© 2026 Sats2USD.com</p>
+            <span className="hidden md:inline">{"  |  "}</span>
+            <Link href="/cookies" className="hover:underline">Cookies</Link>
+            <span className="hidden md:inline">{"  |  "}</span>
+            <Link href="/terms-of-use" className="hover:underline">Terms</Link>
+            <span className="hidden md:inline">{"  |  "}</span>
+            <Link href="/contact" className="hover:underline">Contact</Link>
+          </div>
+          <p className="font-normal leading-[12px] md:text-center">© 2026 Sats2USD.com</p>
         </div>
 
       </div>
