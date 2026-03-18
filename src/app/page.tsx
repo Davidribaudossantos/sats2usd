@@ -4,6 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import {
+  AdTopLeaderboard,
+  AdMiddle,
+  AdSmallBanner,
+  AdFooterBanner,
+  AdBottomLeaderboard,
+} from "@/components/AdSlots";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const SATS_PER_BTC = 100_000_000;
@@ -153,6 +160,11 @@ const FAQ_ITEMS = [
     question: "Do I need to create an account?",
     answer:
       "No account required. This is a free, instant converter with no sign-up needed.",
+  },
+  {
+    question: "What makes this converter different from other tools?",
+    answer:
+      "Most crypto converters are buried inside exchanges or bloated with ads, pop-ups, and features you don't need. Sats2USD is a purpose-built tool — clean, fast, and focused. You open it, type a number, and get your answer. No distractions, no account required. Add it to your homescreen and it works just like an app — one tap to check what your sats are worth, anytime.",
   },
 ];
 
@@ -390,23 +402,8 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center bg-[#f7931a] gap-8 py-8 md:pt-[12px]">
 
-      {/* ── TOP AD: desktop only (728×90 leaderboard) ── */}
-      {mounted && !isMobile && (
-        <div
-          style={{
-            width: 728,
-            height: 90,
-            background: "#fff",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#888",
-          }}
-        />
-      )}
+      {/* ── TOP AD: Desktop_Ad1 728×90 leaderboard ── */}
+      <AdTopLeaderboard />
 
       {/* ── Main content ── */}
       <div className="flex w-full max-w-[375px] md:max-w-[320px] lg:max-w-[500px] flex-col gap-8 px-8 md:px-0">
@@ -588,24 +585,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── MIDDLE ADS ── 300×250 on mobile + desktop ── */}
-        {mounted && (
-          <div
-            style={{
-              width: 300,
-              height: 250,
-              margin: "0 auto",
-              background: "#fff",
-              borderRadius: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#888",
-            }}
-          />
-        )}
+        {/* ── MIDDLE AD: Desktop_Ad2 / Mobile_Ad1 300×250 ── */}
+        <AdMiddle />
 
         {/* FAQ */}
         <div className="fade-in-item flex flex-col gap-4" style={{ animationDelay: "400ms" }}>
@@ -690,22 +671,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── AD UNIT: Fixed 300×50 banner between Popular Conversions and Learn More ── */}
-        {mounted && <div
-          style={{
-            width: 300,
-            height: 50,
-            margin: "0 auto",
-            background: "#fff",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#888",
-          }}
-        />}
+        {/* ── SMALL BANNER: Desktop_Ad3 / Mobile_Ad2 300×50 ── */}
+        <AdSmallBanner />
 
         {/* Learn more about Bitcoin & Satoshis */}
         <div className="fade-in-item flex flex-col gap-3" style={{ animationDelay: "458ms" }}>
@@ -813,43 +780,14 @@ export default function Home() {
             </Link>
           </p>
           <p className="text-center font-normal leading-[12px]">© 2026 Sats2USD.com</p>
-          {/* ── AD UNIT 3: Bottom Banner (300×50) — mobile only ── */}
-          {mounted && isMobile && <div
-            style={{
-              width: 300,
-              height: 50,
-              margin: "0 auto",
-              background: "#fff",
-              borderRadius: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 14,
-              fontWeight: 600,
-              color: "#888",
-            }}
-          />}
+          {/* ── FOOTER BANNER: Mobile_Ad3 300×50 ── */}
+          <AdFooterBanner />
         </div>
 
       </div>
 
-      {/* ── AD UNIT 4: Bottom Leaderboard (728×90) — desktop only ── */}
-      {mounted && !isMobile && (
-        <div
-          style={{
-            width: 728,
-            height: 90,
-            background: "#fff",
-            borderRadius: 4,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 14,
-            fontWeight: 600,
-            color: "#888",
-          }}
-        />
-      )}
+      {/* ── BOTTOM LEADERBOARD: Desktop_Ad4 728×90 ── */}
+      <AdBottomLeaderboard />
 
     </div>
   );
