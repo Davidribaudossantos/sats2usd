@@ -314,7 +314,7 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
                     ? "Type your item to submit"
                     : "Type something to get its cost in sats"
                 }
-                className="flex-1 bg-transparent text-[14px] font-medium leading-[16px] text-black placeholder-[#c9c9c9] outline-none"
+                className="flex-1 bg-transparent text-[16px] font-medium leading-[16px] text-black placeholder-[#c9c9c9] outline-none"
               />
               {/* Arrow button — only in default/result state */}
               {s !== "submit" && (

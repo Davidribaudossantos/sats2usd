@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Lexend_Deca } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsent";
@@ -7,6 +7,12 @@ const lexendDeca = Lexend_Deca({
   subsets: ["latin"],
   variable: "--font-lexend-deca",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "Sats to USD Converter — Live Satoshi to Dollar Calculator",
