@@ -6,6 +6,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { CURRENCIES, CURRENCY_CODES, type CurrencyCode } from "@/lib/currencies";
 import CurrencySelectorBar from "@/components/CurrencySelectorBar";
+import CostInSats from "@/components/CostInSats";
 import {
   AdTopLeaderboard,
   AdMiddle,
@@ -664,6 +665,9 @@ export default function Home() {
 
         {/* ── MIDDLE AD: Desktop_Ad2 / Mobile_Ad1 300×250 ── */}
         <AdMiddle />
+
+        {/* What does this cost in sats? */}
+        <CostInSats btcPrice={btcPrice} />
 
         {/* FAQ */}
         <div className="fade-in-item flex flex-col gap-4" style={{ animationDelay: "400ms" }}>

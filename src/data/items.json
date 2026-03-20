@@ -1,0 +1,2002 @@
+[
+  {
+    "name": "A coffee",
+    "priceUSD": 5.5,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A latte",
+    "priceUSD": 6.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A cappuccino",
+    "priceUSD": 5.75,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A Big Mac",
+    "priceUSD": 5.69,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A Chipotle burrito",
+    "priceUSD": 10.75,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A Subway footlong",
+    "priceUSD": 9.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A slice of pizza",
+    "priceUSD": 3.5,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A whole pizza",
+    "priceUSD": 18.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A dozen eggs",
+    "priceUSD": 4.5,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A gallon of milk",
+    "priceUSD": 4.25,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A loaf of bread",
+    "priceUSD": 3.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bag of rice (5 lb)",
+    "priceUSD": 5.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A rotisserie chicken",
+    "priceUSD": 7.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A ribeye steak",
+    "priceUSD": 18.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A pound of ground beef",
+    "priceUSD": 6.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A pint of beer",
+    "priceUSD": 8.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A craft beer six-pack",
+    "priceUSD": 12.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bottle of wine",
+    "priceUSD": 15.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bottle of champagne",
+    "priceUSD": 45.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A cocktail at a bar",
+    "priceUSD": 16.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bottle of water",
+    "priceUSD": 2.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A can of Coca-Cola",
+    "priceUSD": 1.5,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "An energy drink",
+    "priceUSD": 3.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A gallon of orange juice",
+    "priceUSD": 6.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A Starbucks Frappuccino",
+    "priceUSD": 6.95,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bag of chips",
+    "priceUSD": 4.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A pint of ice cream",
+    "priceUSD": 6.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A box of cereal",
+    "priceUSD": 5.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A dozen donuts",
+    "priceUSD": 14.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A cheeseburger combo meal",
+    "priceUSD": 11.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "Netflix Standard",
+    "priceUSD": 17.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Netflix Premium",
+    "priceUSD": 24.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Spotify Premium",
+    "priceUSD": 11.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Apple Music",
+    "priceUSD": 10.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "YouTube Premium",
+    "priceUSD": 13.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Disney+",
+    "priceUSD": 13.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "HBO Max",
+    "priceUSD": 16.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Amazon Prime (monthly)",
+    "priceUSD": 14.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Amazon Prime (annual)",
+    "priceUSD": 139.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "ChatGPT Plus",
+    "priceUSD": 20.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Claude Pro",
+    "priceUSD": 20.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Adobe Creative Cloud",
+    "priceUSD": 59.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Microsoft 365 Personal",
+    "priceUSD": 9.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "iCloud+ (200 GB)",
+    "priceUSD": 2.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Dropbox Plus",
+    "priceUSD": 11.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Hulu (no ads)",
+    "priceUSD": 17.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Paramount+",
+    "priceUSD": 11.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "PlayStation Plus (monthly)",
+    "priceUSD": 9.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Xbox Game Pass Ultimate",
+    "priceUSD": 19.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "New York Times digital",
+    "priceUSD": 25.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "iPhone 16",
+    "priceUSD": 799.0,
+    "category": "Tech"
+  },
+  {
+    "name": "iPhone 16 Pro Max",
+    "priceUSD": 1199.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Samsung Galaxy S25",
+    "priceUSD": 799.0,
+    "category": "Tech"
+  },
+  {
+    "name": "MacBook Air M4",
+    "priceUSD": 1099.0,
+    "category": "Tech"
+  },
+  {
+    "name": "MacBook Pro 14\" M4 Pro",
+    "priceUSD": 1999.0,
+    "category": "Tech"
+  },
+  {
+    "name": "iPad Pro 13\"",
+    "priceUSD": 1299.0,
+    "category": "Tech"
+  },
+  {
+    "name": "iPad Air",
+    "priceUSD": 599.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Apple Watch Series 10",
+    "priceUSD": 399.0,
+    "category": "Tech"
+  },
+  {
+    "name": "AirPods Pro",
+    "priceUSD": 249.0,
+    "category": "Tech"
+  },
+  {
+    "name": "AirPods Max",
+    "priceUSD": 549.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Sony WH-1000XM5",
+    "priceUSD": 349.0,
+    "category": "Tech"
+  },
+  {
+    "name": "PlayStation 5",
+    "priceUSD": 499.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Xbox Series X",
+    "priceUSD": 499.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Nintendo Switch 2",
+    "priceUSD": 449.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Steam Deck OLED",
+    "priceUSD": 549.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Meta Quest 3",
+    "priceUSD": 499.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Apple Vision Pro",
+    "priceUSD": 3499.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Sony A7 IV camera",
+    "priceUSD": 2498.0,
+    "category": "Tech"
+  },
+  {
+    "name": "GoPro Hero 13",
+    "priceUSD": 399.0,
+    "category": "Tech"
+  },
+  {
+    "name": "DJI Mini 4 Pro drone",
+    "priceUSD": 759.0,
+    "category": "Tech"
+  },
+  {
+    "name": "LG C4 65\" OLED TV",
+    "priceUSD": 1799.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Sonos Arc soundbar",
+    "priceUSD": 899.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Dyson V15 vacuum",
+    "priceUSD": 749.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Kindle Paperwhite",
+    "priceUSD": 149.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Samsung 1TB SSD",
+    "priceUSD": 109.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A gallon of gas",
+    "priceUSD": 3.49,
+    "category": "Transport"
+  },
+  {
+    "name": "Uber ride (5 miles)",
+    "priceUSD": 15.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Uber ride (20 miles)",
+    "priceUSD": 38.0,
+    "category": "Transport"
+  },
+  {
+    "name": "NYC subway ride",
+    "priceUSD": 2.9,
+    "category": "Transport"
+  },
+  {
+    "name": "Monthly subway pass NYC",
+    "priceUSD": 132.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Oil change",
+    "priceUSD": 75.0,
+    "category": "Transport"
+  },
+  {
+    "name": "New set of tires",
+    "priceUSD": 600.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Flight NYC to London",
+    "priceUSD": 650.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Flight NYC to LA",
+    "priceUSD": 280.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Flight NYC to Miami",
+    "priceUSD": 180.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Tesla Model 3",
+    "priceUSD": 42990.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Tesla Model Y",
+    "priceUSD": 47990.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Tesla Cybertruck",
+    "priceUSD": 79990.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Toyota Camry",
+    "priceUSD": 29495.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Honda Civic",
+    "priceUSD": 25945.0,
+    "category": "Transport"
+  },
+  {
+    "name": "BMW 3 Series",
+    "priceUSD": 44450.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Porsche 911",
+    "priceUSD": 118000.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Average used car (US)",
+    "priceUSD": 27000.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Car insurance (monthly)",
+    "priceUSD": 175.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Parking in Manhattan (monthly)",
+    "priceUSD": 600.0,
+    "category": "Transport"
+  },
+  {
+    "name": "1 bed apartment rent NYC",
+    "priceUSD": 3800.0,
+    "category": "Housing"
+  },
+  {
+    "name": "2 bed apartment rent NYC",
+    "priceUSD": 5200.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1 bed apartment rent LA",
+    "priceUSD": 2500.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1 bed apartment rent Austin",
+    "priceUSD": 1600.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1 bed apartment rent Miami",
+    "priceUSD": 2400.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1 bed apartment rent Chicago",
+    "priceUSD": 1900.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1 bed apartment rent San Francisco",
+    "priceUSD": 3200.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average US home",
+    "priceUSD": 420000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in Manhattan",
+    "priceUSD": 1200000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in Austin",
+    "priceUSD": 450000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in Miami",
+    "priceUSD": 600000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in LA",
+    "priceUSD": 950000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Electricity bill (monthly)",
+    "priceUSD": 150.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Internet bill (monthly)",
+    "priceUSD": 75.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Cell phone bill (monthly)",
+    "priceUSD": 85.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Home insurance (annual)",
+    "priceUSD": 2300.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Property tax (US average annual)",
+    "priceUSD": 3500.0,
+    "category": "Housing"
+  },
+  {
+    "name": "IKEA couch",
+    "priceUSD": 599.0,
+    "category": "Housing"
+  },
+  {
+    "name": "King size mattress",
+    "priceUSD": 1200.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Washer and dryer set",
+    "priceUSD": 1800.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A men's haircut",
+    "priceUSD": 35.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A women's haircut",
+    "priceUSD": 65.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Gym membership (monthly)",
+    "priceUSD": 50.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "CrossFit membership (monthly)",
+    "priceUSD": 175.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Movie ticket",
+    "priceUSD": 15.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Movie ticket + popcorn + drink",
+    "priceUSD": 30.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Concert ticket (general admission)",
+    "priceUSD": 95.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "NFL game ticket (average)",
+    "priceUSD": 151.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "NBA game ticket (average)",
+    "priceUSD": 94.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A book (paperback)",
+    "priceUSD": 16.99,
+    "category": "Everyday"
+  },
+  {
+    "name": "A book (Kindle)",
+    "priceUSD": 12.99,
+    "category": "Everyday"
+  },
+  {
+    "name": "Dry cleaning (suit)",
+    "priceUSD": 25.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A pack of diapers",
+    "priceUSD": 35.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A pair of running shoes",
+    "priceUSD": 130.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A pair of Levi's jeans",
+    "priceUSD": 69.5,
+    "category": "Everyday"
+  },
+  {
+    "name": "A basic white t-shirt",
+    "priceUSD": 20.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A winter jacket",
+    "priceUSD": 150.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Dog food (monthly)",
+    "priceUSD": 60.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Vet visit (routine)",
+    "priceUSD": 250.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Laundry detergent",
+    "priceUSD": 12.99,
+    "category": "Everyday"
+  },
+  {
+    "name": "Rolex Submariner",
+    "priceUSD": 10100.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Rolex Daytona",
+    "priceUSD": 15650.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Omega Speedmaster",
+    "priceUSD": 6500.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Louis Vuitton Neverfull bag",
+    "priceUSD": 2030.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Herm\u00e8s Birkin 25",
+    "priceUSD": 11400.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Gucci loafers",
+    "priceUSD": 890.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Canada Goose parka",
+    "priceUSD": 1295.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Ray-Ban Wayfarer sunglasses",
+    "priceUSD": 171.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "First class flight NYC to London",
+    "priceUSD": 8500.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Michelin star dinner for two",
+    "priceUSD": 500.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A yacht (entry level)",
+    "priceUSD": 300000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Lamborghini Hurac\u00e1n",
+    "priceUSD": 238000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Ferrari Roma",
+    "priceUSD": 272000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Chanel No. 5 perfume",
+    "priceUSD": 165.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A diamond engagement ring (1 ct)",
+    "priceUSD": 6000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "Ledger Nano X",
+    "priceUSD": 149.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Ledger Nano S Plus",
+    "priceUSD": 79.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Trezor Model T",
+    "priceUSD": 179.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Trezor Safe 3",
+    "priceUSD": 79.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "ColdCard Mk4",
+    "priceUSD": 149.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Blockstream Jade",
+    "priceUSD": 64.99,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Bitcoin white paper (printed)",
+    "priceUSD": 15.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Steel seed phrase backup",
+    "priceUSD": 55.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Bitcoin conference ticket",
+    "priceUSD": 999.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Start9 server",
+    "priceUSD": 599.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "University tuition (1 year, public)",
+    "priceUSD": 11260.0,
+    "category": "Education"
+  },
+  {
+    "name": "University tuition (1 year, private)",
+    "priceUSD": 42162.0,
+    "category": "Education"
+  },
+  {
+    "name": "Harvard tuition (1 year)",
+    "priceUSD": 59076.0,
+    "category": "Education"
+  },
+  {
+    "name": "MBA (average total cost)",
+    "priceUSD": 120000.0,
+    "category": "Education"
+  },
+  {
+    "name": "Udemy course",
+    "priceUSD": 14.99,
+    "category": "Education"
+  },
+  {
+    "name": "Coursera Plus (annual)",
+    "priceUSD": 399.0,
+    "category": "Education"
+  },
+  {
+    "name": "Duolingo Super (annual)",
+    "priceUSD": 83.99,
+    "category": "Education"
+  },
+  {
+    "name": "SAT prep course",
+    "priceUSD": 799.0,
+    "category": "Education"
+  },
+  {
+    "name": "Student loan (average total)",
+    "priceUSD": 37574.0,
+    "category": "Education"
+  },
+  {
+    "name": "School supplies (annual)",
+    "priceUSD": 150.0,
+    "category": "Education"
+  },
+  {
+    "name": "Hotel night (3-star US average)",
+    "priceUSD": 150.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Hotel night (5-star NYC)",
+    "priceUSD": 600.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Airbnb (US average per night)",
+    "priceUSD": 180.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Passport (US)",
+    "priceUSD": 165.0,
+    "category": "Travel"
+  },
+  {
+    "name": "TSA PreCheck (5 years)",
+    "priceUSD": 78.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Global Entry (5 years)",
+    "priceUSD": 120.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Travel insurance (1 week trip)",
+    "priceUSD": 75.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Checked bag fee (one way)",
+    "priceUSD": 35.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Disney World ticket (1 day)",
+    "priceUSD": 109.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Cruise (7-day Caribbean)",
+    "priceUSD": 1200.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Week in Bali (budget)",
+    "priceUSD": 800.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Week in Paris (mid-range)",
+    "priceUSD": 2500.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Ski pass (1 day, Colorado)",
+    "priceUSD": 200.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Rental car (per day)",
+    "priceUSD": 55.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Airport parking (per day)",
+    "priceUSD": 25.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Health insurance (monthly, US average)",
+    "priceUSD": 477.0,
+    "category": "Health"
+  },
+  {
+    "name": "Dental cleaning",
+    "priceUSD": 150.0,
+    "category": "Health"
+  },
+  {
+    "name": "Eye exam",
+    "priceUSD": 200.0,
+    "category": "Health"
+  },
+  {
+    "name": "Prescription glasses",
+    "priceUSD": 300.0,
+    "category": "Health"
+  },
+  {
+    "name": "LASIK eye surgery",
+    "priceUSD": 4400.0,
+    "category": "Health"
+  },
+  {
+    "name": "ER visit (average)",
+    "priceUSD": 2200.0,
+    "category": "Health"
+  },
+  {
+    "name": "Therapy session",
+    "priceUSD": 175.0,
+    "category": "Health"
+  },
+  {
+    "name": "Whoop membership (annual)",
+    "priceUSD": 239.0,
+    "category": "Health"
+  },
+  {
+    "name": "Peloton membership (monthly)",
+    "priceUSD": 44.0,
+    "category": "Health"
+  },
+  {
+    "name": "A bottle of multivitamins",
+    "priceUSD": 25.0,
+    "category": "Health"
+  },
+  {
+    "name": "Tipping 20% on a $50 dinner",
+    "priceUSD": 10.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "An Uber Eats delivery fee",
+    "priceUSD": 5.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "Wedding (US average)",
+    "priceUSD": 35000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A new iPhone screen repair",
+    "priceUSD": 279.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Child daycare (monthly)",
+    "priceUSD": 1500.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A smoothie",
+    "priceUSD": 9.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A matcha latte",
+    "priceUSD": 6.5,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A protein shake",
+    "priceUSD": 8.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A burrito bowl",
+    "priceUSD": 11.5,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A sushi dinner for two",
+    "priceUSD": 90.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A lobster roll",
+    "priceUSD": 28.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A jar of peanut butter",
+    "priceUSD": 5.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A pound of bacon",
+    "priceUSD": 7.49,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A pack of chicken breasts",
+    "priceUSD": 12.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bag of avocados",
+    "priceUSD": 5.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A tub of protein powder",
+    "priceUSD": 39.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bottle of olive oil",
+    "priceUSD": 10.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A frozen pizza",
+    "priceUSD": 7.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A box of protein bars",
+    "priceUSD": 24.99,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A Thanksgiving turkey",
+    "priceUSD": 30.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "Figma Pro (monthly)",
+    "priceUSD": 15.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Notion Plus (monthly)",
+    "priceUSD": 10.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Canva Pro (monthly)",
+    "priceUSD": 13.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Midjourney (monthly)",
+    "priceUSD": 10.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "GitHub Copilot (monthly)",
+    "priceUSD": 10.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Strava Premium (annual)",
+    "priceUSD": 79.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Headspace (annual)",
+    "priceUSD": 69.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Audible (monthly)",
+    "priceUSD": 14.95,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Apple TV+",
+    "priceUSD": 9.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Crunchyroll Premium",
+    "priceUSD": 7.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "LinkedIn Premium (monthly)",
+    "priceUSD": 29.99,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Grammarly Premium (monthly)",
+    "priceUSD": 12.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "1Password (annual)",
+    "priceUSD": 35.88,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "NordVPN (annual)",
+    "priceUSD": 59.88,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "Superhuman email (monthly)",
+    "priceUSD": 30.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "A Google Pixel 9",
+    "priceUSD": 799.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A mechanical keyboard",
+    "priceUSD": 150.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A gaming mouse",
+    "priceUSD": 80.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A 27\" 4K monitor",
+    "priceUSD": 450.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A 34\" ultrawide monitor",
+    "priceUSD": 799.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A USB-C hub",
+    "priceUSD": 45.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A portable charger",
+    "priceUSD": 30.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A wireless charging pad",
+    "priceUSD": 25.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A Wi-Fi router",
+    "priceUSD": 150.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A mesh Wi-Fi system",
+    "priceUSD": 300.0,
+    "category": "Tech"
+  },
+  {
+    "name": "An NAS drive (4TB)",
+    "priceUSD": 350.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A webcam",
+    "priceUSD": 100.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A podcast microphone",
+    "priceUSD": 130.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A Ring doorbell",
+    "priceUSD": 100.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A Roomba vacuum",
+    "priceUSD": 350.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A 3D printer",
+    "priceUSD": 250.0,
+    "category": "Tech"
+  },
+  {
+    "name": "An e-bike",
+    "priceUSD": 1500.0,
+    "category": "Tech"
+  },
+  {
+    "name": "An electric scooter",
+    "priceUSD": 500.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A home projector",
+    "priceUSD": 600.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A smart thermostat",
+    "priceUSD": 250.0,
+    "category": "Tech"
+  },
+  {
+    "name": "An electric car charge (full)",
+    "priceUSD": 15.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A bike tune-up",
+    "priceUSD": 75.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A driving lesson",
+    "priceUSD": 60.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A car wash",
+    "priceUSD": 25.0,
+    "category": "Transport"
+  },
+  {
+    "name": "Car registration (annual)",
+    "priceUSD": 150.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A speeding ticket",
+    "priceUSD": 200.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A toll road pass (monthly)",
+    "priceUSD": 45.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A Citi Bike annual pass",
+    "priceUSD": 219.0,
+    "category": "Transport"
+  },
+  {
+    "name": "A bus ticket (intercity)",
+    "priceUSD": 35.0,
+    "category": "Transport"
+  },
+  {
+    "name": "An Amtrak ticket (NYC to DC)",
+    "priceUSD": 120.0,
+    "category": "Transport"
+  },
+  {
+    "name": "1-bed apartment rent Denver",
+    "priceUSD": 1700.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1-bed apartment rent Seattle",
+    "priceUSD": 2200.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1-bed apartment rent Nashville",
+    "priceUSD": 1600.0,
+    "category": "Housing"
+  },
+  {
+    "name": "1-bed apartment rent Phoenix",
+    "priceUSD": 1400.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in Seattle",
+    "priceUSD": 850000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in Denver",
+    "priceUSD": 550000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Average home in Dallas",
+    "priceUSD": 380000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A security deposit (1 month NYC)",
+    "priceUSD": 3800.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Water bill (monthly)",
+    "priceUSD": 50.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Gas bill (monthly)",
+    "priceUSD": 65.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A couch",
+    "priceUSD": 900.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A dining table set",
+    "priceUSD": 600.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A home security system",
+    "priceUSD": 300.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Moving company (local)",
+    "priceUSD": 1200.0,
+    "category": "Housing"
+  },
+  {
+    "name": "Moving company (cross-country)",
+    "priceUSD": 5000.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A yoga class",
+    "priceUSD": 25.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A manicure",
+    "priceUSD": 35.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A massage (1 hour)",
+    "priceUSD": 120.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A teeth whitening kit",
+    "priceUSD": 45.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A tattoo (small)",
+    "priceUSD": 150.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A birthday cake",
+    "priceUSD": 40.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A bouquet of flowers",
+    "priceUSD": 45.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A greeting card",
+    "priceUSD": 5.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A photo print (8x10)",
+    "priceUSD": 3.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A newspaper",
+    "priceUSD": 3.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "An umbrella",
+    "priceUSD": 20.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A backpack",
+    "priceUSD": 60.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A suitcase (carry-on)",
+    "priceUSD": 120.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A pair of sunglasses",
+    "priceUSD": 30.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A watch battery replacement",
+    "priceUSD": 15.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A car key replacement",
+    "priceUSD": 250.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A locksmith visit",
+    "priceUSD": 150.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "Postage stamp (US)",
+    "priceUSD": 0.73,
+    "category": "Everyday"
+  },
+  {
+    "name": "A FedEx overnight package",
+    "priceUSD": 35.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A storage unit (monthly)",
+    "priceUSD": 130.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A Patek Philippe Nautilus",
+    "priceUSD": 35000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A Cartier Love bracelet",
+    "priceUSD": 6900.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A Chanel Classic Flap bag",
+    "priceUSD": 10800.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A tailored suit",
+    "priceUSD": 2000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A pair of Louboutin heels",
+    "priceUSD": 795.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A cashmere sweater",
+    "priceUSD": 350.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A bottle of Dom P\u00e9rignon",
+    "priceUSD": 250.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A Montblanc pen",
+    "priceUSD": 600.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A private jet charter (1 hour)",
+    "priceUSD": 5000.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "A night at The Ritz (NYC)",
+    "priceUSD": 1200.0,
+    "category": "Luxury"
+  },
+  {
+    "name": "BitAxe miner",
+    "priceUSD": 199.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Foundation Passport",
+    "priceUSD": 199.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "SeedSigner (DIY)",
+    "priceUSD": 50.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Umbrel Home",
+    "priceUSD": 499.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Coinkite Blockclock",
+    "priceUSD": 399.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Opendime",
+    "priceUSD": 19.99,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "The Bitcoin Standard (book)",
+    "priceUSD": 14.99,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Mastering Bitcoin (book)",
+    "priceUSD": 39.99,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Bitcoin mining rig (entry)",
+    "priceUSD": 3000.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Antminer S21",
+    "priceUSD": 5000.0,
+    "category": "Bitcoin"
+  },
+  {
+    "name": "Community college (1 semester)",
+    "priceUSD": 3500.0,
+    "category": "Education"
+  },
+  {
+    "name": "Coding bootcamp",
+    "priceUSD": 15000.0,
+    "category": "Education"
+  },
+  {
+    "name": "Skillshare (annual)",
+    "priceUSD": 167.88,
+    "category": "Education"
+  },
+  {
+    "name": "MasterClass (annual)",
+    "priceUSD": 120.0,
+    "category": "Education"
+  },
+  {
+    "name": "GMAT exam",
+    "priceUSD": 275.0,
+    "category": "Education"
+  },
+  {
+    "name": "GRE exam",
+    "priceUSD": 220.0,
+    "category": "Education"
+  },
+  {
+    "name": "TOEFL exam",
+    "priceUSD": 245.0,
+    "category": "Education"
+  },
+  {
+    "name": "A college textbook",
+    "priceUSD": 80.0,
+    "category": "Education"
+  },
+  {
+    "name": "A private tutor (per hour)",
+    "priceUSD": 60.0,
+    "category": "Education"
+  },
+  {
+    "name": "A piano lesson",
+    "priceUSD": 50.0,
+    "category": "Education"
+  },
+  {
+    "name": "Hotel night (boutique, US)",
+    "priceUSD": 250.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A hostel night (Europe)",
+    "priceUSD": 35.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Flight NYC to Tokyo",
+    "priceUSD": 1100.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Flight LA to Honolulu",
+    "priceUSD": 350.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Flight NYC to Paris",
+    "priceUSD": 600.0,
+    "category": "Travel"
+  },
+  {
+    "name": "An all-inclusive resort (per night)",
+    "priceUSD": 400.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A week in Japan (mid-range)",
+    "priceUSD": 3000.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A week in Thailand (budget)",
+    "priceUSD": 600.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A scuba diving course",
+    "priceUSD": 350.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A guided safari (per day)",
+    "priceUSD": 500.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Universal Studios ticket (1 day)",
+    "priceUSD": 119.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A travel adapter",
+    "priceUSD": 15.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A neck pillow",
+    "priceUSD": 20.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Airport lounge access",
+    "priceUSD": 50.0,
+    "category": "Travel"
+  },
+  {
+    "name": "A Priority Pass membership",
+    "priceUSD": 299.0,
+    "category": "Travel"
+  },
+  {
+    "name": "Dental braces (full treatment)",
+    "priceUSD": 6000.0,
+    "category": "Health"
+  },
+  {
+    "name": "Invisalign treatment",
+    "priceUSD": 5000.0,
+    "category": "Health"
+  },
+  {
+    "name": "A flu shot",
+    "priceUSD": 40.0,
+    "category": "Health"
+  },
+  {
+    "name": "Urgent care visit",
+    "priceUSD": 250.0,
+    "category": "Health"
+  },
+  {
+    "name": "A chiropractor visit",
+    "priceUSD": 75.0,
+    "category": "Health"
+  },
+  {
+    "name": "Contact lenses (annual)",
+    "priceUSD": 250.0,
+    "category": "Health"
+  },
+  {
+    "name": "Sunscreen (SPF 50)",
+    "priceUSD": 12.0,
+    "category": "Health"
+  },
+  {
+    "name": "A first aid kit",
+    "priceUSD": 25.0,
+    "category": "Health"
+  },
+  {
+    "name": "An annual physical",
+    "priceUSD": 300.0,
+    "category": "Health"
+  },
+  {
+    "name": "A blood test panel",
+    "priceUSD": 200.0,
+    "category": "Health"
+  },
+  {
+    "name": "A PS5 game (new release)",
+    "priceUSD": 69.99,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A board game",
+    "priceUSD": 40.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A jigsaw puzzle",
+    "priceUSD": 20.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A LEGO set (large)",
+    "priceUSD": 200.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A vinyl record",
+    "priceUSD": 30.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A guitar (beginner)",
+    "priceUSD": 200.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A piano (digital)",
+    "priceUSD": 700.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A DSLR camera lens",
+    "priceUSD": 500.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A fishing rod and reel",
+    "priceUSD": 100.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A tent (4-person)",
+    "priceUSD": 200.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A pair of ski boots",
+    "priceUSD": 400.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A surfboard",
+    "priceUSD": 500.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A paddleboard",
+    "priceUSD": 350.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A set of golf clubs",
+    "priceUSD": 800.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A tennis racket",
+    "priceUSD": 200.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A padel racket",
+    "priceUSD": 150.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A hockey stick",
+    "priceUSD": 120.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A basketball",
+    "priceUSD": 30.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A yoga mat",
+    "priceUSD": 30.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "A set of dumbbells",
+    "priceUSD": 150.0,
+    "category": "Entertainment"
+  },
+  {
+    "name": "An acre of farmland (US avg)",
+    "priceUSD": 4080.0,
+    "category": "Assets"
+  },
+  {
+    "name": "An ounce of gold",
+    "priceUSD": 3050.0,
+    "category": "Assets"
+  },
+  {
+    "name": "An ounce of silver",
+    "priceUSD": 35.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A share of Apple stock",
+    "priceUSD": 230.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A share of Tesla stock",
+    "priceUSD": 250.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A share of Amazon stock",
+    "priceUSD": 200.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A share of Nvidia stock",
+    "priceUSD": 130.0,
+    "category": "Assets"
+  },
+  {
+    "name": "S&P 500 ETF (1 share)",
+    "priceUSD": 580.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A US savings bond",
+    "priceUSD": 100.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A parking space (NYC)",
+    "priceUSD": 250000.0,
+    "category": "Assets"
+  },
+  {
+    "name": "A babysitter (per hour)",
+    "priceUSD": 22.0,
+    "category": "Family"
+  },
+  {
+    "name": "A baby stroller",
+    "priceUSD": 350.0,
+    "category": "Family"
+  },
+  {
+    "name": "A car seat",
+    "priceUSD": 200.0,
+    "category": "Family"
+  },
+  {
+    "name": "A crib",
+    "priceUSD": 300.0,
+    "category": "Family"
+  },
+  {
+    "name": "Baby formula (monthly)",
+    "priceUSD": 150.0,
+    "category": "Family"
+  },
+  {
+    "name": "A kids' birthday party",
+    "priceUSD": 400.0,
+    "category": "Family"
+  },
+  {
+    "name": "A family photo session",
+    "priceUSD": 300.0,
+    "category": "Family"
+  },
+  {
+    "name": "Summer camp (1 week)",
+    "priceUSD": 500.0,
+    "category": "Family"
+  },
+  {
+    "name": "Braces for a teenager",
+    "priceUSD": 6000.0,
+    "category": "Family"
+  },
+  {
+    "name": "A prom dress",
+    "priceUSD": 200.0,
+    "category": "Family"
+  },
+  {
+    "name": "A coworking space (monthly)",
+    "priceUSD": 300.0,
+    "category": "Everyday"
+  },
+  {
+    "name": "A domain name (annual)",
+    "priceUSD": 15.0,
+    "category": "Tech"
+  },
+  {
+    "name": "Web hosting (monthly)",
+    "priceUSD": 12.0,
+    "category": "Tech"
+  },
+  {
+    "name": "A standing desk",
+    "priceUSD": 500.0,
+    "category": "Housing"
+  },
+  {
+    "name": "An office chair (ergonomic)",
+    "priceUSD": 400.0,
+    "category": "Housing"
+  },
+  {
+    "name": "A tip on a $100 dinner",
+    "priceUSD": 20.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A charcuterie board",
+    "priceUSD": 35.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A bottle of hot sauce",
+    "priceUSD": 8.0,
+    "category": "Food & Drink"
+  },
+  {
+    "name": "A Costco annual membership",
+    "priceUSD": 65.0,
+    "category": "Subscriptions"
+  },
+  {
+    "name": "An Amazon Fresh delivery",
+    "priceUSD": 75.0,
+    "category": "Food & Drink"
+  }
+]
