@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import rawItems from "@/data/items.json";
 
@@ -54,20 +53,14 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
   const [result, setResult] = useState<Item | null>(null);
   const [countdown, setCountdown] = useState(5);
   const [blockVisible, setBlockVisible] = useState(false);
-  // Portal dropdown position
-  const [dropPos, setDropPos] = useState<{ left: number; top: number; width: number } | null>(null);
-  const [mounted, setMounted] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const inputWrapRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const transitionRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sRef = useRef(s);
   sRef.current = s;
   const dateStr = useMemo(() => getDateStr(), []);
-
-  useEffect(() => { setMounted(true); }, []);
 
   // ── Filtered suggestions ──────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -94,24 +87,6 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
 
   const showDrop = focused && s === "default" && query.trim().length > 0;
   const arrowEnabled = showDrop && filtered.length > 0;
-
-  // ── Update portal dropdown position whenever it opens or query changes ────
-  useEffect(() => {
-    if (showDrop && inputWrapRef.current) {
-      const rect = inputWrapRef.current.getBoundingClientRect();
-      setDropPos({ left: rect.left, top: rect.bottom + 4, width: rect.width });
-    } else {
-      setDropPos(null);
-    }
-  }, [showDrop, query]);
-
-  // Close dropdown on scroll (since it's fixed-positioned)
-  useEffect(() => {
-    if (!showDrop) return;
-    function onScroll() { setFocused(false); }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [showDrop]);
 
   // ── Reset to default ──────────────────────────────────────────────────────
   // If currently showing a faded-in block (result/done), fade it out first.
@@ -261,7 +236,7 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
     <div
       ref={containerRef}
       className="fade-in-item flex flex-col gap-[16px]"
-      style={{ animationDelay: "390ms" }}
+      style={{ animationDelay: "390ms", position: "relative", zIndex: 10 }}
     >
       {/* Title */}
       <p className="text-[18px] font-semibold leading-[20px] text-black">
@@ -290,7 +265,7 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
 
         {/* Input field — hidden in "done" state */}
         {s !== "done" && (
-          <div ref={inputWrapRef} className="relative">
+          <div className="relative">
             <div
               className={`flex items-center gap-2 rounded-[8px] bg-white px-[12px] py-[14px] border-2 transition-[border-color] duration-150 ${
                 focused ? "border-black" : "border-transparent"
@@ -332,46 +307,35 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
               )}
             </div>
 
-            {/* Dropdown via Portal — escapes all parent stacking contexts */}
-            {mounted && showDrop && dropPos &&
-              createPortal(
-                <div
-                  style={{
-                    position: "fixed",
-                    left: dropPos.left,
-                    top: dropPos.top,
-                    width: dropPos.width,
-                    zIndex: 9999,
-                  }}
-                  className="max-h-[240px] overflow-y-auto rounded-[8px] bg-white py-[8px] shadow-[0px_4px_12px_rgba(0,0,0,0.2)]"
-                >
-                  {filtered.map((item, i) => (
-                    <button
-                      key={item.name}
-                      type="button"
-                      onMouseDown={() => selectItem(item)}
-                      className={`w-full px-[12px] py-[4px] text-left text-[14px] leading-[22px] hover:bg-[#f7931a]/10 ${
-                        i === 0
-                          ? "font-semibold text-black"
-                          : "font-normal text-[#c9c9c9]"
-                      }`}
-                    >
-                      {item.name}
-                    </button>
-                  ))}
-                  {filtered.length > 0 && (
-                    <div className="mx-[12px] my-[2px] h-px bg-[#e0e0e0]" />
-                  )}
+            {/* Dropdown — absolutely positioned below input */}
+            {showDrop && (
+              <div className="absolute left-0 right-0 top-full z-50 mt-[4px] max-h-[240px] overflow-y-auto rounded-[8px] bg-white py-[8px] shadow-[0px_4px_12px_rgba(0,0,0,0.2)]">
+                {filtered.map((item, i) => (
                   <button
+                    key={item.name}
                     type="button"
-                    onMouseDown={gotoCantFind}
-                    className="w-full px-[12px] py-[4px] text-left text-[14px] font-normal leading-[22px] text-[#8d4f04] hover:bg-[#f7931a]/10"
+                    onMouseDown={() => selectItem(item)}
+                    className={`w-full px-[12px] py-[4px] text-left text-[14px] leading-[22px] hover:bg-[#f7931a]/10 ${
+                      i === 0
+                        ? "font-semibold text-black"
+                        : "font-normal text-[#c9c9c9]"
+                    }`}
                   >
-                    Can&apos;t find it? Submit it.
+                    {item.name}
                   </button>
-                </div>,
-                document.body
-              )}
+                ))}
+                {filtered.length > 0 && (
+                  <div className="mx-[12px] my-[2px] h-px bg-[#e0e0e0]" />
+                )}
+                <button
+                  type="button"
+                  onMouseDown={gotoCantFind}
+                  className="w-full px-[12px] py-[4px] text-left text-[14px] font-normal leading-[22px] text-[#8d4f04] hover:bg-[#f7931a]/10"
+                >
+                  Can&apos;t find it? Submit it.
+                </button>
+              </div>
+            )}
           </div>
         )}
 
