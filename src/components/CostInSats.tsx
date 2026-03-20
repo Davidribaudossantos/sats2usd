@@ -287,7 +287,7 @@ export default function CostInSats({ btcPrice }: { btcPrice: number | null }) {
                 placeholder={
                   s === "submit"
                     ? "Type your item to submit"
-                    : "Type something to get its cost in sats"
+                    : "How many sats for a..."
                 }
                 className="flex-1 bg-transparent text-[16px] font-medium leading-[16px] text-black placeholder-[#c9c9c9] outline-none"
               />
