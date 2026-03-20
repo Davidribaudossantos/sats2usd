@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { CURRENCIES, CURRENCY_CODES, type CurrencyCode } from "@/lib/currencies";
+import CurrencySelectorBar from "@/components/CurrencySelectorBar";
 import {
   AdTopLeaderboard,
   AdMiddle,
@@ -20,10 +22,13 @@ const FETCH_TIMEOUT_MS = 5_000;
 const REFRESH_INTERVAL_MS = 60_000;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-function formatUsd(value: number): string {
+function formatFiat(value: number, isJPY: boolean): string {
   if (value === 0) return "0";
+  if (isJPY) {
+    if (value >= 1) return Math.round(value).toLocaleString("en-US");
+    return value.toFixed(4);
+  }
   if (value >= 1) {
-    // e.g. 1234.56 → "1,234.56"
     const [int, dec] = value.toFixed(2).split(".");
     return `${parseInt(int, 10).toLocaleString("en-US")}.${dec}`;
   }
@@ -45,10 +50,9 @@ function getMeasureCtx() {
  * fits within `availableWidth`. Falls back to char-count heuristic on SSR.
  */
 function getFittingFontSize(text: string, availableWidth: number): number {
-  if (!text) return FONT_SIZES[0]; // empty → largest size so Math.min never caps a real value
+  if (!text) return FONT_SIZES[0];
   const ctx = getMeasureCtx();
   if (!ctx) {
-    // SSR heuristic — account for commas in the char count
     const len = text.length;
     if (len <= 10) return 42;
     if (len <= 13) return 36;
@@ -56,8 +60,6 @@ function getFittingFontSize(text: string, availableWidth: number): number {
     if (len <= 21) return 26;
     return 24;
   }
-  // Add a small safety buffer so measured text never touches the container
-  // edges even if canvas metrics are slightly optimistic.
   const safeWidth = Math.max(0, availableWidth - 20);
   for (const size of FONT_SIZES) {
     ctx.font = `400 ${size}px 'Lexend Deca', Arial, sans-serif`;
@@ -67,14 +69,14 @@ function getFittingFontSize(text: string, availableWidth: number): number {
 }
 
 /**
- * Apply comma separators to a raw USD string (e.g. "1234.56" → "1,234.56").
+ * Apply comma separators to a raw fiat string (e.g. "1234.56" → "1,234.56").
  * Preserves a trailing decimal point while the user is still typing.
  */
-function applyUsdCommas(raw: string): string {
+function applyFiatCommas(raw: string): string {
   if (!raw || raw === ".") return raw;
   const dotIdx = raw.indexOf(".");
   const intPart = dotIdx === -1 ? raw : raw.slice(0, dotIdx);
-  const decPart = dotIdx === -1 ? "" : raw.slice(dotIdx); // includes the "."
+  const decPart = dotIdx === -1 ? "" : raw.slice(dotIdx);
   const formattedInt = intPart ? parseInt(intPart, 10).toLocaleString("en-US") : "";
   return formattedInt + decPart;
 }
@@ -95,12 +97,6 @@ function restoreCursor(input: HTMLInputElement, oldValue: string, newValue: stri
 }
 
 // ── Field width → available text width ───────────────────────────────────────
-// Subtract actual layout constraints only:
-// - left-3 padding             (≈12px)
-// - right-[94px] currency area (≈94px)
-// - borders                    (≈6px)
-// The input element's own right-[94px] CSS already prevents text from
-// overlapping the currency label/copy icon — no extra JS reserve needed.
 function fieldToAvailableWidth(fieldWidth: number) {
   return Math.max(0, fieldWidth - 112);
 }
@@ -170,17 +166,19 @@ const FAQ_ITEMS = [
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function Home() {
-  // satsInput: raw digits while user is typing; comma-formatted when computed
   const [satsInput, setSatsInput] = useState("");
-  // usdInput: raw decimal string while typing; formatted decimal when computed
-  const [usdInput, setUsdInput] = useState("");
-  // which field the user last typed in (determines which copy icon shows)
-  const [lastTyped, setLastTyped] = useState<"sats" | "usd" | null>(null);
-  const [focusedField, setFocusedField] = useState<"sats" | "usd" | null>(null);
-  const [copiedField, setCopiedField] = useState<"sats" | "usd" | null>(null);
+  const [fiatInput, setFiatInput] = useState("");
+  const [lastTyped, setLastTyped] = useState<"sats" | "fiat" | null>(null);
+  const [focusedField, setFocusedField] = useState<"sats" | "fiat" | null>(null);
+  const [copiedField, setCopiedField] = useState<"sats" | "fiat" | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [satoshiExpanded, setSatoshiExpanded] = useState(false);
   const [ratesFlashKey, setRatesFlashKey] = useState(0);
+
+  // ── Multi-currency state ──────────────────────────────────────────────────
+  const [activeCurrency, setActiveCurrency] = useState<CurrencyCode>("USD");
+  const [fxRates, setFxRates] = useState<Record<string, number>>({ USD: 1 });
+  const fetchedFxCodes = useRef<Set<string>>(new Set());
 
   const [btcPrice, setBtcPrice] = useState<number | null>(null);
   const [ratesStatus, setRatesStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -189,16 +187,19 @@ export default function Home() {
 
   const { isMobile, mounted } = useIsMobile();
 
-  // fieldWidth: actual pixel width of the input fields, updated on resize
-  // Mobile default: min(screenWidth, 375) - 64px padding = 311px
   const [fieldWidth, setFieldWidth] = useState(311);
 
-  // Derived live rates (null while loading)
-  const usdPerSat = btcPrice ? btcPrice / SATS_PER_BTC : null;
+  // ── Derived live rates for active currency ────────────────────────────────
+  const isJPY = activeCurrency === "JPY";
+  const fxRate = fxRates[activeCurrency] ?? null;
+  const btcPriceInFiat = btcPrice !== null && fxRate !== null ? btcPrice * fxRate : null;
+  const fiatPerSat = btcPriceInFiat ? btcPriceInFiat / SATS_PER_BTC : null;
+  const satsPerFiat = btcPriceInFiat ? SATS_PER_BTC / btcPriceInFiat : null;
+  // Keep USD rate for the "How many satoshis are in $1?" FAQ item
   const satsPerUsd = btcPrice ? SATS_PER_BTC / btcPrice : null;
 
   const satsInputRef = useRef<HTMLInputElement>(null);
-  const usdInputRef = useRef<HTMLInputElement>(null);
+  const fiatInputRef = useRef<HTMLInputElement>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Responsive field width ──────────────────────────────────────────────────
@@ -210,7 +211,6 @@ export default function Home() {
       } else if (w >= 768) {
         setFieldWidth(320);
       } else {
-        // content has px-8 (32px each side), max-w-[375px]
         setFieldWidth(Math.min(w, 375) - 64);
       }
     }
@@ -257,12 +257,48 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
+  // ── Currency selector handler ───────────────────────────────────────────────
+  async function handleCurrencySelect(code: CurrencyCode) {
+    setActiveCurrency(code);
+    const { fxCode } = CURRENCIES[code];
+    let newRate: number | null = fxCode ? (fxRates[code] ?? null) : 1;
+
+    // Fetch FX rate if not yet cached
+    if (fxCode && newRate === null && !fetchedFxCodes.current.has(code)) {
+      fetchedFxCodes.current.add(code);
+      try {
+        const res = await fetch(`https://api.frankfurter.app/latest?from=USD&to=${fxCode}`);
+        if (res.ok) {
+          const data = await res.json();
+          const r = data?.rates?.[fxCode];
+          if (typeof r === "number") {
+            newRate = r;
+            setFxRates((prev) => ({ ...prev, [code]: r }));
+          }
+        }
+      } catch {}
+    }
+
+    // Recalculate fiat from current sats value using new rate
+    if (btcPrice && newRate !== null && satsInput) {
+      const rawSats = satsInput.replace(/,/g, "");
+      const n = parseInt(rawSats, 10);
+      if (!isNaN(n) && n > 0) {
+        const newFiatPerSat = (btcPrice * newRate) / SATS_PER_BTC;
+        setFiatInput(formatFiat(n * newFiatPerSat, code === "JPY"));
+        setLastTyped("sats");
+      }
+    } else if (!satsInput) {
+      setFiatInput("");
+    }
+  }
+
   // Imperatively trigger pulse on the computed (output) input element
   const triggerPulse = useCallback((ref: React.RefObject<HTMLInputElement | null>) => {
     const el = ref.current;
     if (!el) return;
     el.classList.remove("animate-value-pulse");
-    void el.offsetWidth; // force reflow to restart animation
+    void el.offsetWidth;
     el.classList.add("animate-value-pulse");
   }, []);
 
@@ -274,67 +310,73 @@ export default function Home() {
       const oldCursor = input.selectionStart ?? oldValue.length;
 
       const raw = oldValue.replace(/[^0-9]/g, "");
-      if (raw.length > MAX_DIGITS) return; // silent limit
+      if (raw.length > MAX_DIGITS) return;
 
-      // Format with commas and restore caret
       const formatted = raw ? parseInt(raw, 10).toLocaleString("en-US") : "";
       setSatsInput(formatted);
       restoreCursor(input, oldValue, formatted, oldCursor);
 
       setLastTyped("sats");
-      if (raw === "" || !usdPerSat) {
-        setUsdInput("");
+      if (raw === "" || !fiatPerSat) {
+        setFiatInput("");
       } else {
-        const computed = formatUsd(parseInt(raw.replace(/,/g, ""), 10) * usdPerSat);
-        setUsdInput(computed);
-        triggerPulse(usdInputRef);
+        const computed = formatFiat(parseInt(raw.replace(/,/g, ""), 10) * fiatPerSat, isJPY);
+        setFiatInput(computed);
+        triggerPulse(fiatInputRef);
       }
     },
-    [triggerPulse, usdPerSat]
+    [triggerPulse, fiatPerSat, isJPY]
   );
 
-  const handleUsdChange = useCallback(
+  const handleFiatChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target;
       const oldValue = input.value;
       const oldCursor = input.selectionStart ?? oldValue.length;
 
-      // Strip commas + anything except digits and decimal point
-      let raw = oldValue.replace(/[^0-9.]/g, "");
-      // Only one decimal point allowed
-      const dotIdx = raw.indexOf(".");
-      if (dotIdx !== -1)
-        raw = raw.slice(0, dotIdx + 1) + raw.slice(dotIdx + 1).replace(/\./g, "");
-      // Enforce digit limit (excluding the dot)
-      if (raw.replace(".", "").length > MAX_DIGITS) return;
-
-      // Format with commas and restore caret
-      const formatted = applyUsdCommas(raw);
-      setUsdInput(formatted);
-      restoreCursor(input, oldValue, formatted, oldCursor);
-
-      setLastTyped("usd");
-      if (raw === "" || raw === "." || !satsPerUsd) {
-        setSatsInput("");
-      } else {
-        const usdNum = parseFloat(raw.replace(/,/g, ""));
-        if (!isNaN(usdNum)) {
-          const computedSats = Math.round(usdNum * satsPerUsd);
+      if (isJPY) {
+        // JPY: integers only
+        const raw = oldValue.replace(/[^0-9]/g, "");
+        if (raw.length > MAX_DIGITS) return;
+        const formatted = raw ? parseInt(raw, 10).toLocaleString("en-US") : "";
+        setFiatInput(formatted);
+        restoreCursor(input, oldValue, formatted, oldCursor);
+        setLastTyped("fiat");
+        if (raw === "" || !satsPerFiat) {
+          setSatsInput("");
+        } else {
+          const computedSats = Math.round(parseInt(raw, 10) * satsPerFiat);
           setSatsInput(computedSats.toLocaleString("en-US"));
           triggerPulse(satsInputRef);
         }
+      } else {
+        let raw = oldValue.replace(/[^0-9.]/g, "");
+        const dotIdx = raw.indexOf(".");
+        if (dotIdx !== -1)
+          raw = raw.slice(0, dotIdx + 1) + raw.slice(dotIdx + 1).replace(/\./g, "");
+        if (raw.replace(".", "").length > MAX_DIGITS) return;
+        const formatted = applyFiatCommas(raw);
+        setFiatInput(formatted);
+        restoreCursor(input, oldValue, formatted, oldCursor);
+        setLastTyped("fiat");
+        if (raw === "" || raw === "." || !satsPerFiat) {
+          setSatsInput("");
+        } else {
+          const fiatNum = parseFloat(raw.replace(/,/g, ""));
+          if (!isNaN(fiatNum)) {
+            const computedSats = Math.round(fiatNum * satsPerFiat);
+            setSatsInput(computedSats.toLocaleString("en-US"));
+            triggerPulse(satsInputRef);
+          }
+        }
       }
     },
-    [triggerPulse, satsPerUsd]
+    [triggerPulse, satsPerFiat, isJPY]
   );
 
-  const handleSatsFocus = useCallback(() => {
-    setFocusedField("sats");
-  }, []);
-
+  const handleSatsFocus = useCallback(() => setFocusedField("sats"), []);
   const handleSatsBlur = useCallback(() => {
     setFocusedField(null);
-    // Reformat with comma separators
     setSatsInput((prev) => {
       if (!prev) return prev;
       const n = parseInt(prev.replace(/,/g, ""), 10);
@@ -342,27 +384,27 @@ export default function Home() {
     });
   }, []);
 
-  const handleUsdFocus = useCallback(() => {
-    setFocusedField("usd");
-  }, []);
-
-  const handleUsdBlur = useCallback(() => {
+  const handleFiatFocus = useCallback(() => setFocusedField("fiat"), []);
+  const handleFiatBlur = useCallback(() => {
     setFocusedField(null);
-    // Reformat on blur (e.g. "1." → "1.00")
-    setUsdInput((prev) => {
+    setFiatInput((prev) => {
       if (!prev || prev === ".") return prev;
+      if (isJPY) {
+        const n = parseInt(prev.replace(/,/g, ""), 10);
+        return isNaN(n) ? prev : n.toLocaleString("en-US");
+      }
       const n = parseFloat(prev.replace(/,/g, ""));
-      return isNaN(n) ? prev : formatUsd(n);
+      return isNaN(n) ? prev : formatFiat(n, false);
     });
-  }, []);
+  }, [isJPY]);
 
   const handleReset = useCallback(() => {
     setSatsInput("");
-    setUsdInput("");
+    setFiatInput("");
     setLastTyped(null);
   }, []);
 
-  const handleCopy = useCallback((field: "sats" | "usd", value: string) => {
+  const handleCopy = useCallback((field: "sats" | "fiat", value: string) => {
     const text = value.replace(/,/g, "");
     try {
       navigator.clipboard.writeText(text);
@@ -382,17 +424,15 @@ export default function Home() {
   }, []);
 
   // ── Derived values ─────────────────────────────────────────────────────────
-  // Both fields always share the same font size so they stay visually in sync.
-  // Use the minimum of both fitted sizes so neither field ever clips its content.
   const sharedFontSize = Math.min(
     getFittingFontSize(satsInput, inputAvailableWidth),
-    getFittingFontSize(usdInput, inputAvailableWidth),
+    getFittingFontSize(fiatInput, inputAvailableWidth),
   );
   const satsFontSize = sharedFontSize;
-  const usdFontSize = sharedFontSize;
+  const fiatFontSize = sharedFontSize;
 
   const hasSatsValue = satsInput.replace(/,/g, "") !== "";
-  const hasUsdValue = usdInput !== "" && usdInput !== ".";
+  const hasFiatValue = fiatInput !== "" && fiatInput !== ".";
 
   // Live BTC equivalent of sats input
   const btcEquivalent = (() => {
@@ -400,14 +440,20 @@ export default function Home() {
     const n = parseInt(raw, 10);
     if (!raw || isNaN(n) || n === 0) return "0 BTC";
     const btc = n / SATS_PER_BTC;
-    // toFixed(8) then strip trailing zeros after decimal
     const str = btc.toFixed(8).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
     return `${str} BTC`;
   })();
 
   // Copy icon only appears on the computed (opposite) field
-  const showSatsCopy = lastTyped === "usd" && hasSatsValue;
-  const showUsdCopy = lastTyped === "sats" && hasUsdValue;
+  const showSatsCopy = lastTyped === "fiat" && hasSatsValue;
+  const showFiatCopy = lastTyped === "sats" && hasFiatValue;
+
+  // Rate row loading: BTC fetching OR non-USD with FX not yet loaded
+  const showRatesLoading =
+    ratesStatus === "loading" ||
+    (ratesStatus === "ready" && activeCurrency !== "USD" && fxRate === null);
+
+  const activeCurrencyInfo = CURRENCIES[activeCurrency];
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -425,7 +471,9 @@ export default function Home() {
             <Image src="/btc-logo.svg" alt="Bitcoin logo" width={40} height={40} />
           </div>
           <h1 className="text-center text-[36px] font-medium leading-[1.1] text-black">
-            Satoshi to USD converter
+            {activeCurrency === "USD"
+              ? "Satoshi to USD converter"
+              : `${activeCurrencyInfo.name} to Satoshis converter`}
           </h1>
         </div>
 
@@ -502,10 +550,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* USD Input */}
+            {/* Fiat Input */}
             <div
               className={`fade-in-item relative h-[99px] w-full rounded-[8px] bg-white border-[3px] transition-[border-color] duration-200 ease-in-out ${
-                focusedField === "usd" ? "border-black" : "border-transparent"
+                focusedField === "fiat" ? "border-black" : "border-transparent"
               }`}
               style={{ animationDelay: "200ms" }}
             >
@@ -513,28 +561,28 @@ export default function Home() {
                 Amount
               </span>
               <input
-                ref={usdInputRef}
+                ref={fiatInputRef}
                 type="text"
-                inputMode="decimal"
-                value={usdInput}
-                onChange={handleUsdChange}
-                onFocus={handleUsdFocus}
-                onBlur={handleUsdBlur}
+                inputMode={isJPY ? "numeric" : "decimal"}
+                value={fiatInput}
+                onChange={handleFiatChange}
+                onFocus={handleFiatFocus}
+                onBlur={handleFiatBlur}
                 placeholder="0"
                 className={`absolute top-[67px] -translate-y-1/2 left-3 right-[94px] bg-transparent font-normal outline-none placeholder-[#c9c9c9] transition-[color] duration-200 ease-in-out ${
-                  hasUsdValue ? "text-black" : "text-[#c9c9c9]"
+                  hasFiatValue ? "text-black" : "text-[#c9c9c9]"
                 }`}
-                style={{ fontSize: `${usdFontSize}px` }}
+                style={{ fontSize: `${fiatFontSize}px` }}
               />
-              {showUsdCopy && (
+              {showFiatCopy && (
                 <button
-                  onClick={() => handleCopy("usd", usdInput)}
+                  onClick={() => handleCopy("fiat", fiatInput)}
                   className="group absolute right-[22px] top-[57px] size-6"
-                  aria-label="Copy USD value"
+                  aria-label={`Copy ${activeCurrency} value`}
                 >
-                  {copiedField === "usd" && (
+                  {copiedField === "fiat" && (
                     <span
-                      key={usdInput}
+                      key={fiatInput}
                       className="animate-copied absolute right-7 top-1/2 -translate-y-1/2 whitespace-nowrap text-[10px] font-medium text-black"
                     >
                       Copied!
@@ -551,19 +599,29 @@ export default function Home() {
               )}
               <div className="absolute right-3 top-3 flex items-center gap-1">
                 <div className="flex flex-col items-end">
-                  <span className="text-[14px] font-medium text-black">US Dollar</span>
-                  <span className="text-[12px] font-semibold text-[#f7931a]">USD</span>
+                  <span className="text-[14px] font-medium text-black">{activeCurrencyInfo.name}</span>
+                  <span className="text-[12px] font-semibold text-[#f7931a]">{activeCurrency}</span>
                 </div>
-                <Image src="/usd-icon.svg" alt="US Dollar" width={30} height={30} />
+                <Image
+                  src={activeCurrencyInfo.icon}
+                  alt={activeCurrencyInfo.name}
+                  width={30}
+                  height={30}
+                />
               </div>
             </div>
           </div>
 
-          {/* Live rates */}
+          {/* Currency selector + live rates */}
           <div className="fade-in-item flex flex-col gap-[8px]" style={{ animationDelay: "300ms" }}>
-            <p className="text-[12px] font-semibold text-[#8d4f04]">Live rates:</p>
+            <CurrencySelectorBar
+              mode="toggle"
+              activeCurrency={activeCurrency}
+              onSelect={handleCurrencySelect}
+            />
 
-            {ratesStatus === "loading" && (
+            <div className="mt-[10px] flex flex-col gap-[4px]">
+            {showRatesLoading && (
               <div className="flex flex-col gap-[4px]">
                 <div className="h-[12px] w-full animate-pulse rounded-[2px] bg-[#8d4f04]/30" />
                 <div className="h-[12px] w-full animate-pulse rounded-[2px] bg-[#8d4f04]/30" />
@@ -579,7 +637,7 @@ export default function Home() {
               </p>
             )}
 
-            {ratesStatus === "ready" && btcPrice && usdPerSat && satsPerUsd && (
+            {ratesStatus === "ready" && fiatPerSat && satsPerFiat && btcPriceInFiat && (
               <div
                 key={ratesFlashKey}
                 className={`flex flex-col gap-[4px] rounded-[4px] text-[12px] font-medium text-[#8d4f04] ${
@@ -587,15 +645,20 @@ export default function Home() {
                 }`}
               >
                 <div className="flex justify-between">
-                  <span>1 SATS = {usdPerSat.toFixed(6)} USD</span>
-                  <span>1 USD = {Math.round(satsPerUsd).toLocaleString()} SATS</span>
+                  <span>1 SATS = {fiatPerSat.toFixed(6)} {activeCurrency}</span>
+                  <span>1 {activeCurrency} = {Math.round(satsPerFiat).toLocaleString()} SATS</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>1 BTC = {btcPrice.toLocaleString("en-US")} USD</span>
-                  <span>1 USD = {(1 / btcPrice).toFixed(8)} BTC</span>
+                  <span>
+                    1 BTC ={" "}
+                    {btcPriceInFiat.toLocaleString("en-US", { maximumFractionDigits: isJPY ? 0 : 2 })}{" "}
+                    {activeCurrency}
+                  </span>
+                  <span>1 {activeCurrency} = {(1 / btcPriceInFiat).toFixed(8)} BTC</span>
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
 

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import type { CurrencyPair, PairSlug } from "@/lib/currencyPairs";
+import { CURRENCIES, type CurrencyCode } from "@/lib/currencies";
+import CurrencySelectorBar from "@/components/CurrencySelectorBar";
 import {
   AdTopLeaderboard,
   AdMiddle,
@@ -590,10 +592,14 @@ export default function FiatConverter({
             </div>
           </div>
 
-          {/* Live rates */}
+          {/* Currency selector + live rates */}
           <div className="fade-in-item flex flex-col gap-[8px]" style={{ animationDelay: "300ms" }}>
-            <p className="text-[12px] font-semibold text-[#8d4f04]">Live rates:</p>
+            <CurrencySelectorBar
+              mode="link"
+              activeCurrency={currency as CurrencyCode}
+            />
 
+            <div className="mt-[10px] flex flex-col gap-[4px]">
             {ratesLoading && (
               <div className="flex flex-col gap-[4px]">
                 <div className="h-[12px] w-full animate-pulse rounded-[2px] bg-[#8d4f04]/30" />
@@ -633,6 +639,7 @@ export default function FiatConverter({
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
 
