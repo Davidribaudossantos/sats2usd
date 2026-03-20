@@ -825,6 +825,20 @@ export default function Home() {
 
         {/* Footer */}
         <div className="fade-in-item flex w-full flex-col gap-4 text-[12px] text-[#8d4f04]" style={{ animationDelay: "500ms" }}>
+          <a
+            href="https://www.producthunt.com/products/sats2usd/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-sats2usd"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-4 block self-start md:self-center"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1184708&theme=neutral"
+              alt="Sats2USD - Real-time sats to USD converter | Product Hunt"
+              width={250}
+              height={54}
+            />
+          </a>
           <p className="leading-[16px] md:text-center">
             <span className="font-semibold">Disclaimer: </span>
             <span className="font-normal">
