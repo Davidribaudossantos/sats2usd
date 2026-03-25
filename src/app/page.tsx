@@ -669,6 +669,27 @@ export default function Home() {
         {/* What does this cost in sats? */}
         <CostInSats btcPrice={btcPrice} />
 
+        {/* Stack Calculator CTA */}
+        <div className="fade-in-item" style={{ animationDelay: "395ms" }}>
+          <Link
+            href="/stack-calculator"
+            className="group block bg-black rounded-[12px] px-[16px] py-[12px] flex flex-col gap-[6px]"
+          >
+            <Image src="/stack-icon.svg" alt="" width={24} height={24} className="invert" />
+            <p className="text-[18px] font-semibold leading-[20px] text-white">
+              How fast can you reach your sats goal?
+            </p>
+            <div className="flex items-center gap-[6px]">
+              <span className="text-[14px] font-medium leading-[16px] text-[#f7931a]">
+                Find out on our Stack Calculator
+              </span>
+              <svg width="14" height="11" viewBox="0 0 13 11.3851" fill="none" aria-hidden="true" className="transition-transform duration-200 ease-out group-hover:translate-x-1">
+                <path d="M0 5.69253H12M12 5.69253L7.2 0.692532M12 5.69253L7.2 10.6925" stroke="#f7931a" strokeWidth="2" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          </Link>
+        </div>
+
         {/* FAQ */}
         <div className="fade-in-item flex flex-col gap-4" style={{ animationDelay: "400ms" }}>
           {FAQ_ITEMS.map((item, index) => (
@@ -866,6 +887,8 @@ export default function Home() {
             <Link href="/cookies" className="hover:underline">Cookies</Link>
             <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
             <Link href="/terms-of-use" className="hover:underline">Terms</Link>
+            <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
+            <Link href="/stack-calculator" className="hover:underline">The Stack Calculator</Link>
             <span className="hidden md:inline">&nbsp; |&nbsp;{" "}</span>
             <Link href="/contact" className="hover:underline">Contact</Link>
           </div>
