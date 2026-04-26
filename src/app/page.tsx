@@ -258,6 +258,46 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
+  // ── Pre-fetch all non-USD FX rates on mount so they're ready before user types ──
+  useEffect(() => {
+    const nonUsdEntries = CURRENCY_CODES
+      .filter((c) => CURRENCIES[c].fxCode)
+      .map((c) => ({ code: c, fxCode: CURRENCIES[c].fxCode! }));
+    if (!nonUsdEntries.length) return;
+    const codes = nonUsdEntries.map((e) => e.fxCode).join(",");
+    fetch(`https://api.frankfurter.dev/v1/latest?from=USD&to=${codes}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data?.rates) return;
+        setFxRates((prev) => {
+          const next = { ...prev };
+          nonUsdEntries.forEach(({ code, fxCode }) => {
+            if (typeof data.rates[fxCode] === "number") {
+              next[code] = data.rates[fxCode];
+              fetchedFxCodes.current.add(code);
+            }
+          });
+          return next;
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  // ── Recompute sats when rates arrive after user has already typed in fiat ──
+  useEffect(() => {
+    if (!satsPerFiat || !fiatInput || lastTyped !== "fiat") return;
+    const raw = fiatInput.replace(/,/g, "");
+    if (!raw || raw === ".") return;
+    if (isJPY) {
+      const n = parseInt(raw, 10);
+      if (!isNaN(n) && n > 0) setSatsInput(Math.round(n * satsPerFiat).toLocaleString("en-US"));
+    } else {
+      const n = parseFloat(raw);
+      if (!isNaN(n) && n > 0) setSatsInput(Math.round(n * satsPerFiat).toLocaleString("en-US"));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [satsPerFiat]);
+
   // ── Currency selector handler ───────────────────────────────────────────────
   async function handleCurrencySelect(code: CurrencyCode) {
     setActiveCurrency(code);
@@ -268,7 +308,7 @@ export default function Home() {
     if (fxCode && newRate === null && !fetchedFxCodes.current.has(code)) {
       fetchedFxCodes.current.add(code);
       try {
-        const res = await fetch(`https://api.frankfurter.app/latest?from=USD&to=${fxCode}`);
+        const res = await fetch(`https://api.frankfurter.dev/v1/latest?from=USD&to=${fxCode}`);
         if (res.ok) {
           const data = await res.json();
           const r = data?.rates?.[fxCode];

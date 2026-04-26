@@ -262,7 +262,7 @@ export default function FiatConverter({
   // ── FX rate fetch (non-USD currencies) ────────────────────────────────────
   useEffect(() => {
     if (!fxCode) return;
-    fetch(`https://api.frankfurter.app/latest?from=USD&to=${fxCode}`)
+    fetch(`https://api.frankfurter.dev/v1/latest?from=USD&to=${fxCode}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         const rate = data?.rates?.[fxCode];
@@ -280,6 +280,21 @@ export default function FiatConverter({
       })
       .catch(() => {});
   }, []);
+
+  // ── Recompute sats when FX rate arrives after user has already typed in fiat ──
+  useEffect(() => {
+    if (!satsPerFiat || !fiatInput || lastTyped !== "fiat") return;
+    const raw = fiatInput.replace(/,/g, "");
+    if (!raw || raw === ".") return;
+    if (isJPY) {
+      const n = parseInt(raw, 10);
+      if (!isNaN(n) && n > 0) setSatsInput(Math.round(n * satsPerFiat).toLocaleString("en-US"));
+    } else {
+      const n = parseFloat(raw);
+      if (!isNaN(n) && n > 0) setSatsInput(Math.round(n * satsPerFiat).toLocaleString("en-US"));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [satsPerFiat]);
 
   // ── Pulse helper ──────────────────────────────────────────────────────────
   const triggerPulse = useCallback((ref: React.RefObject<HTMLInputElement | null>) => {

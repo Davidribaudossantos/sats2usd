@@ -8,7 +8,7 @@ const BTC_URL =
 // Request NGN + BRL — Frankfurter uses ECB data so NGN is unavailable;
 // BRL is the fallback if NGN is missing from the response.
 const FX_URL =
-  "https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,NGN,BRL";
+  "https://api.frankfurter.dev/v1/latest?from=USD&to=EUR,GBP,JPY,NGN,BRL";
 
 function formatSats(sats: number): string {
   if (sats >= 10) return Math.round(sats).toLocaleString("en-US");
